@@ -169,6 +169,19 @@ public function getCoordinates()
 }
 
 /**
+ * Returns whether this object has been geocoded or not.
+ *
+ * @return Boolean
+ */
+public function isGeocoded()
+{
+	$lat = \$this->{$this->getColumnGetter('latitude_column')}();
+	$lng = \$this->{$this->getColumnGetter('longitude_column')}();
+	
+	return (!empty($lat) && !empty($lng));
+}
+
+/**
  * Calculates the distance between a given $objectName and this one.
  *
  * @param $className \${$objectName}    A $className object.
