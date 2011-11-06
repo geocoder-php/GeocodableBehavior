@@ -37,7 +37,8 @@ Basically, the behavior will add:
 
 ### ActiveRecord API ###
 
-`getDistanceTo()` takes two arguments:
+`getDistanceTo()` returns the distance between the current object and a given one.
+The method takes two arguments:
 
 * a geocoded object;
 * a measure unit (`KILOMETERS_UNIT`, `MILES_UNIT`, or `NAUTICAL_MILES_UNIT` defined in the `Peer` class of the geocoded model).
