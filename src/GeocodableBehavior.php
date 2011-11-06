@@ -175,10 +175,10 @@ public function getCoordinates()
  */
 public function isGeocoded()
 {
-	$lat = \$this->{$this->getColumnGetter('latitude_column')}();
-	$lng = \$this->{$this->getColumnGetter('longitude_column')}();
-	
-	return (!empty($lat) && !empty($lng));
+    \$lat = \$this->{$this->getColumnGetter('latitude_column')}();
+    \$lng = \$this->{$this->getColumnGetter('longitude_column')}();
+
+    return (!empty(\$lat) && !empty(\$lng));
 }
 
 /**
