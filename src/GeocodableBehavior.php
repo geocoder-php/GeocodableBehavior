@@ -225,16 +225,23 @@ public function getDistanceTo($className \${$objectName}, \$unit = $peerName::KI
  */
 public function filterByDistanceFrom(\$latitude, \$longitude, \$distance, \$unit = $peerName::KILOMETERS_UNIT, \$comparison = Criteria::LESS_THAN)
 {
-    \$sql = '(%s * 60 * ACOS(COS(RADIANS(%s)) * COS(RADIANS(%s)) * COS(RADIANS(%s) - RADIANS(%s)) + SIN(RADIANS(%s)) * SIN(RADIANS(%s))))';
+    if ($peerName::MILES_UNIT === \$unit) {
+        \$earthRadius = 3959;
+    } elseif ($peerName::MILES_UNIT === \$unit) {
+        \$earthRadius = 3440;
+    } else {
+        \$earthRadius = 6371;
+    }
+
+    \$sql = 'ABS(%s * ACOS(%s * COS(RADIANS(%s)) * COS(RADIANS(%s) - %s) + %s * SIN(RADIANS(%s))))';
     \$preparedSql = sprintf(\$sql,
-        $peerName::MILES_UNIT,
-        \$latitude,
+        \$earthRadius,
+        cos(deg2rad(\$latitude)),
         \$this->getAliasedColName({$this->getColumnConstant('latitude_column', $builder)}),
         \$this->getAliasedColName({$this->getColumnConstant('longitude_column', $builder)}),
-        \$this->getAliasedColName({$this->getColumnConstant('latitude_column', $builder)}),
-        \$longitude,
-        \$latitude,
-        \$comparison
+        deg2rad(\$longitude),
+        sin(deg2rad(\$latitude)),
+        \$this->getAliasedColName({$this->getColumnConstant('latitude_column', $builder)})
     );
 
     return \$this

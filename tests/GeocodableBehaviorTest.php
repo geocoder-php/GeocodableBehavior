@@ -73,12 +73,19 @@ class GeocodableBehaviorTest extends BookstoreTestBase
         GeolocatedTablePeer::doDeleteAll();
 
         $geo1 = new GeolocatedTable();
-        $geo1->setName('Aulnat');
-        $geo1->setCoordinates(45.795463, 3.163237);
+        $geo1->setName('Aulnat Area');
+        $geo1->setCity('Aulnat');
+        $geo1->setCountry('France');
         $geo1->save();
 
+        $geo2 = new GeolocatedTable();
+        $geo2->setName('Lyon Area');
+        $geo2->setCity('Lyon');
+        $geo2->setCountry('France');
+        $geo2->save();
+
         $objects = GeolocatedTableQuery::create()
-            ->filterByDistanceFrom(45.77722154971201, 3.086986541748047, 5)
+            ->filterByDistanceFrom($geo1->getLatitude(), $geo1->getLongitude(), 5)
             ->find()
             ;
         $this->assertEquals(0, count($objects));
@@ -89,12 +96,25 @@ class GeocodableBehaviorTest extends BookstoreTestBase
         GeolocatedTablePeer::doDeleteAll();
 
         $geo1 = new GeolocatedTable();
-        $geo1->setName('Aulnat');
-        $geo1->setCoordinates(45.795463, 3.163237);
+        $geo1->setName('Aulnat Area');
+        $geo1->setCity('Aulnat');
+        $geo1->setCountry('France');
         $geo1->save();
 
+        $geo2 = new GeolocatedTable();
+        $geo2->setName('Lyon Area');
+        $geo2->setCity('Lyon');
+        $geo2->setCountry('France');
+        $geo2->save();
+
+        $geo3 = new GeolocatedTable();
+        $geo3->setName('Lempdes Area');
+        $geo3->setCity('Lempdes');
+        $geo3->setCountry('France');
+        $geo3->save();
+
         $objects = GeolocatedTableQuery::create()
-            ->filterByDistanceFrom(45.77722154971201, 3.086986541748047, 10)
+            ->filterByDistanceFrom($geo1->getLatitude(), $geo1->getLongitude(), 20)
             ->find()
             ;
         $this->assertEquals(1, count($objects));
