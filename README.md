@@ -50,8 +50,6 @@ The method takes two arguments:
 
 ### ActiveQuery API ###
 
-** /!\ Not safe, not fully working at the moment /!\ **
-
 `filterByDistanceFrom()` takes five arguments:
 
 * a latitude value;
