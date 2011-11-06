@@ -205,12 +205,12 @@ public function getDistanceTo($className \${$objectName}, \$unit = $peerName::KI
  * @param	double \$latitude       The latitude of the origin point.
  * @param	double \$longitude      The longitude of the origin point.
  * @param	double \$distance       The distance between the origin and the objects to find.
- * @param	Criteria \$comparison   Comparison sign (default is: `<`).
  * @param	\$unit                  The unit measure.
+ * @param	Criteria \$comparison   Comparison sign (default is: `<`).
  *
  * @return	$queryClassName The current query, for fluid interface
  */
-public function filterByDistanceFrom(\$latitude, \$longitude, \$distance, \$comparison = Criteria::LESS_THAN, \$unit = $peerName::KILOMETERS_UNIT)
+public function filterByDistanceFrom(\$latitude, \$longitude, \$distance, \$unit = $peerName::KILOMETERS_UNIT, \$comparison = Criteria::LESS_THAN)
 {
     \$sql = '(%s * 60 * ACOS(COS(RADIANS(%s)) * COS(RADIANS(%s)) * COS(RADIANS(%s) - RADIANS(%s)) + SIN(RADIANS(%s)) * SIN(RADIANS(%s))))';
     \$preparedSql = sprintf(\$sql,

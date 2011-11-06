@@ -55,8 +55,9 @@ The method takes two arguments:
 * a latitude value;
 * a longitude value;
 * a distance value;
-* a comparison sign (`Criteria::LESS_THAN` is the default value);
-* a measure unit (`KILOMETERS_UNIT`, `MILES_UNIT`, or `NAUTICAL_MILES_UNIT` defined in the `Peer` class of the geocoded model).
+* a measure unit (`KILOMETERS_UNIT`, `MILES_UNIT`, or `NAUTICAL_MILES_UNIT` defined in the `Peer` class of the geocoded model);
+* a comparison sign (`Criteria::LESS_THAN` is the default value).
+
 
 It will add a filter by distance on your current query and returns itself for fluid interface.
 
