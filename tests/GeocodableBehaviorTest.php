@@ -28,7 +28,7 @@ class GeocodableBehaviorTest extends BookstoreTestBase
         $geo2->setLatitude(45.77722154971201);
         $geo2->setLongitude(3.086986541748047);
 
-        $dist = round($geo1->getDistanceFrom($geo2), 2);
+        $dist = round($geo1->getDistanceTo($geo2), 2);
         $this->assertEquals(6.25, $dist);
     }
 
@@ -42,7 +42,7 @@ class GeocodableBehaviorTest extends BookstoreTestBase
         $geo2->setLatitude(45.77722154971201);
         $geo2->setLongitude(3.086986541748047);
 
-        $dist = round($geo1->getDistanceFrom($geo2, GeolocatedTablePeer::MILES_UNIT), 2);
+        $dist = round($geo1->getDistanceTo($geo2, GeolocatedTablePeer::MILES_UNIT), 2);
         $this->assertEquals(3.88, $dist);
     }
 
@@ -56,7 +56,7 @@ class GeocodableBehaviorTest extends BookstoreTestBase
         $geo2->setLatitude(45.77722154971201);
         $geo2->setLongitude(3.086986541748047);
 
-        $dist = round($geo1->getDistanceFrom($geo2, GeolocatedTablePeer::NAUTICAL_MILES_UNIT), 2);
+        $dist = round($geo1->getDistanceTo($geo2, GeolocatedTablePeer::NAUTICAL_MILES_UNIT), 2);
         $this->assertEquals(3.37, $dist);
     }
 

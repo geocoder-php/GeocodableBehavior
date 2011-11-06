@@ -176,7 +176,7 @@ public function getCoordinates()
  *
  * @return double   The distance between the two objects.
  */
-public function getDistanceFrom($className \${$objectName}, \$unit = $peerName::KILOMETERS_UNIT)
+public function getDistanceTo($className \${$objectName}, \$unit = $peerName::KILOMETERS_UNIT)
 {
     \$dist = rad2deg(acos(sin(deg2rad(\$this->{$this->getColumnGetter('latitude_column')}())) * sin(deg2rad(\${$objectName}->{$this->getColumnGetter('latitude_column')}())) +  cos(deg2rad(\$this->{$this->getColumnGetter('latitude_column')}())) * cos(deg2rad(\${$objectName}->{$this->getColumnGetter('latitude_column')}())) * cos(deg2rad(\$this->{$this->getColumnGetter('longitude_column')}() - \${$objectName}->{$this->getColumnGetter('longitude_column')}())))) * 60 * $peerName::MILES_UNIT;
 

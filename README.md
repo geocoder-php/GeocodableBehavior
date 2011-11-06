@@ -31,13 +31,13 @@ Just add the following XML tag in your `schema.xml` file:
 Basically, the behavior will add:
 
 * two new columns to your model (`latitude` and `longitude`);
-* three new methods to the _ActiveRecord_ API (`getDistanceFrom()`, `getCoordinates()`, and `setCoordinates()`);
+* three new methods to the _ActiveRecord_ API (`getDistanceTo()`, `getCoordinates()`, and `setCoordinates()`);
 * a new method to the _ActiveQuery_ API (`filterByDistanceFrom()`).
 
 
 ### ActiveRecord API ###
 
-`getDistanceFrom()` takes two arguments:
+`getDistanceTo()` takes two arguments:
 
 * a geocoded object;
 * a measure unit (`KILOMETERS_UNIT`, `MILES_UNIT`, or `NAUTICAL_MILES_UNIT` defined in the `Peer` class of the geocoded model).
