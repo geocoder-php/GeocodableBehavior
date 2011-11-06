@@ -12,7 +12,7 @@ This behavior uses two external APIs:
 Installation
 ------------
 
-Pick the `GeocodableBehavior.php` file is `src/`, put it somewhere,
+Cherry-pick the `GeocodableBehavior.php` file is `src/`, put it somewhere,
 then add the following line to your `propel.ini` or `build.properties` configuration file:
 
 ``` ini
@@ -31,7 +31,7 @@ Just add the following XML tag in your `schema.xml` file:
 Basically, the behavior will add:
 
 * two new columns to your model (`latitude` and `longitude`);
-* three new methods to the _ActiveRecord_ API (`getDistanceTo()`, `getCoordinates()`, and `setCoordinates()`);
+* four new methods to the _ActiveRecord_ API (`getDistanceTo()`, `isGeocoded()`, `getCoordinates()`, and `setCoordinates()`);
 * a new method to the _ActiveQuery_ API (`filterByDistanceFrom()`).
 
 
@@ -42,6 +42,8 @@ The method takes two arguments:
 
 * a geocoded object;
 * a measure unit (`KILOMETERS_UNIT`, `MILES_UNIT`, or `NAUTICAL_MILES_UNIT` defined in the `Peer` class of the geocoded model).
+
+`isGeocoded()` returns a boolean value whether the object has been geocoded or not.
 
 `getCoordinates()`, `setCoordinates()` allows to quickly set/get latitude and longitude values.
 
