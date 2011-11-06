@@ -20,13 +20,13 @@ class GeocodableBehavior extends Behavior
         'latitude_column'   => 'latitude',
         'longitude_column'  => 'longitude',
         // IP-based Geocoding
-        'geolocate_ip'      => 'false',
+        'geocode_ip'        => 'false',
         'ip_column'         => 'ip_address',
         'ipinfodb_api_key'  => '',
         // Address Geocoding
-        'geolocate_address' => 'false',
+        'geocode_address'   => 'false',
         'address_columns'   => 'street,locality,region,postal_code,country',
-        'yahoo_api_key'    => ''
+        'yahoo_api_key'     => ''
     );
 
     /**
@@ -46,7 +46,7 @@ class GeocodableBehavior extends Behavior
                 'type' => 'DOUBLE'
             ));
         }
-        if('true' === $this->getParameter('geolocate_ip') && !$this->getTable()->containsColumn($this->getParameter('ip_address'))) {
+        if('true' === $this->getParameter('geocode_ip') && !$this->getTable()->containsColumn($this->getParameter('ip_address'))) {
             $this->getTable()->addColumn(array(
                 'name' => $this->getParameter('ip_column'),
                 'type' => 'CHAR',
@@ -102,7 +102,7 @@ const NAUTICAL_MILES_UNIT = 0.8684;
     public function preSave($builder)
     {
         $script = '';
-        if ('true' === $this->getParameter('geolocate_ip')) {
+        if ('true' === $this->getParameter('geocode_ip')) {
             $script .= "\$queryUrl = sprintf('http://api.ipinfodb.com/v3/ip-city/?key={$this->getParameter('ipinfodb_api_key')}&format=json&ip=%s', \$this->{$this->getColumnGetter('ip_column')}());
 \$json = file_get_contents(\$queryUrl);
 if (false !== \$json) {
@@ -114,7 +114,7 @@ if (false !== \$json) {
 }";
         }
 
-        if ('true' === $this->getParameter('geolocate_address') && '' !== $this->getParameter('address_columns')) {
+        if ('true' === $this->getParameter('geocode_address') && '' !== $this->getParameter('address_columns')) {
             $table = $this->getTable();
             $address = '';
             foreach (explode(',', $this->getParameter('address_columns')) as $col) {

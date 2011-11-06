@@ -81,7 +81,7 @@ To enable the IP-Based geocoding, add the following configuration in your `schem
 
 ``` xml
 <behavior name="geocodable">
-    <parameter name="geolocate_ip" value="true" />
+    <parameter name="geocode_ip" value="true" />
     <parameter name="ipinfodb_api_key" value="<IPINFODB_API_KEY>" />
 </behavior>
 ```
@@ -101,7 +101,7 @@ To enable the Address-Based geocoding, add the following configuration:
 
 ``` xml
 <behavior name="geocodable">
-    <parameter name="geolocate_address" value="true" />
+    <parameter name="geocode_address" value="true" />
     <parameter name="yahoo_api_key" value="<YAHOO_API_KEY>" />
 </behavior>
 ```
@@ -126,12 +126,12 @@ Parameters
     <parameter name="longitude_column" value="longitude" />
 
     <!-- IP-Based Geocoding -->
-    <parameter name="geolocate_ip" value="false" />
+    <parameter name="geocode_ip" value="false" />
     <parameter name="ip_column" value="ip_address" />
     <parameter name="ipinfodb_api_key" value="<IPINFODB_API_KEY>" />
 
     <!-- Address-Based Geocoding -->
-    <parameter name="geolocate_address" value="false" />
+    <parameter name="geocode_address" value="false" />
     <parameter name="address_columns" value="street,locality,region,postal_code,country" />
     <parameter name="yahoo_api_key" value="<YAHOO_API_KEY>" />
 </behavior>
