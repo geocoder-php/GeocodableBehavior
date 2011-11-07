@@ -17,16 +17,18 @@ class GeocodableBehavior extends Behavior
     // default parameters value
     protected $parameters = array(
         // Base
-        'latitude_column'   => 'latitude',
-        'longitude_column'  => 'longitude',
+        'latitude_column'       => 'latitude',
+        'longitude_column'      => 'longitude',
         // IP-based Geocoding
-        'geocode_ip'        => 'false',
-        'ip_column'         => 'ip_address',
-        'ipinfodb_api_key'  => '',
+        'geocode_ip'            => 'false',
+        'ip_column'             => 'ip_address',
+        'ipinfodb_api_key'      => '',
         // Address Geocoding
-        'geocode_address'   => 'false',
-        'address_columns'   => 'street,locality,region,postal_code,country',
-        'yahoo_api_key'     => ''
+        'geocode_address'       => 'false',
+        'address_columns'       => 'street,locality,region,postal_code,country',
+        'yahoo_api_key'         => '',
+
+        'http_client_method'    => 'curl'
     );
 
     /**
@@ -55,33 +57,6 @@ class GeocodableBehavior extends Behavior
         }
     }
 
-    /**
-     * Get the setter of one of the columns of the behavior
-     *
-     * @param     string $column One of the behavior colums, 'latitude_column', 'longitude_column', or 'ip_column'
-     * @return    string The related setter, 'setLatitude', 'setLongitude', 'setIpAddress'
-     */
-    protected function getColumnSetter($column)
-    {
-        return 'set' . $this->getColumnForParameter($column)->getPhpName();
-    }
-
-    /**
-     * Get the getter of one of the columns of the behavior
-     *
-     * @param     string $column One of the behavior colums, 'latitude_column', 'longitude_column', or 'ip_column'
-     * @return    string The related getter, 'getLatitude', 'getLongitude', 'getIpAddress'
-     */
-    protected function getColumnGetter($column)
-    {
-        return 'get' . $this->getColumnForParameter($column)->getPhpName();
-    }
-
-    protected function getColumnConstant($columnName, $builder)
-    {
-        return $builder->getColumnConstant($this->getColumnForParameter($columnName));
-    }
-
     public function staticAttributes($builder)
     {
 		return "/**
@@ -104,7 +79,7 @@ const NAUTICAL_MILES_UNIT = 0.8684;
         $script = '';
         if ('true' === $this->getParameter('geocode_ip')) {
             $script .= "\$queryUrl = sprintf('http://api.ipinfodb.com/v3/ip-city/?key={$this->getParameter('ipinfodb_api_key')}&format=json&ip=%s', \$this->{$this->getColumnGetter('ip_column')}());
-\$json = file_get_contents(\$queryUrl);
+\$json = \$this->getRemoteContent(\$queryUrl);
 if (false !== \$json) {
     \$data = json_decode(\$json);
     if (\$data->longitude && \$data->latitude) {
@@ -124,7 +99,7 @@ if (false !== \$json) {
                 }
             }
             $script .= "\$queryUrl = sprintf('http://where.yahooapis.com/geocode?q=%s&flags=CJ&appid={$this->getParameter('yahoo_api_key')}', urlencode($address));
-\$json = file_get_contents(\$queryUrl);
+\$json = \$this->getRemoteContent(\$queryUrl);
 if (false !== \$json) {
     \$data = json_decode(\$json)->ResultSet->Results[0];
     if (\$data->longitude && \$data->latitude) {
@@ -143,7 +118,9 @@ if (false !== \$json) {
         $objectName = strtolower($className);
         $peerName = $builder->getStubPeerBuilder()->getClassname();
 
-        return "/**
+        return "{$this->addGetRemoteContent($builder)}
+
+/**
  * Convenient method to set latitude and longitude values.
  *
  * @param double \$latitude     A latitude value.
@@ -211,8 +188,7 @@ public function getDistanceTo($className \${$objectName}, \$unit = $peerName::KI
         $queryClassName = $builder->getStubQueryBuilder()->getClassname();
         $peerName = $builder->getStubPeerBuilder()->getClassname();
 
-        return "
-/**
+        return "/**
  * Filters objects by distance from a given origin.
  *
  * @param	double \$latitude       The latitude of the origin point.
@@ -250,5 +226,106 @@ public function filterByDistanceFrom(\$latitude, \$longitude, \$distance, \$unit
         ;
 }
 ";
+    }
+
+    protected function addGetRemoteContent($builder)
+    {
+        if ('zend_http_client' === $this->getParameter('http_client_method')) {
+            return $this->addGetRemoteContentWithZendHttpClient($builder);
+        } elseif ('buzz' === $this->getParameter('http_client_method')) {
+            return $this->addGetRemoteContentWithBuzz();
+        } elseif ('custom' === $this->getParameter('http_client_method')) {
+            return $this->addGetRemoteContentCustom();
+        }
+
+        return $this->addGetRemoteContentWithCurl();
+    }
+
+    protected function addGetRemoteContentCustom()
+    {
+        return preg_replace('/{.*/s', '{'.PHP_EOL.'}', $this->getGetRemoteContentStub());
+    }
+
+    protected function addGetRemoteContentWithBuzz()
+    {
+        $code = "\$browser = new \Buzz\Browser();
+    \$response = \$browser->get(\$url);
+    \$content = \$response->getContent();";
+
+        return sprintf($this->getGetRemoteContentStub(), $code);
+    }
+
+    protected function addGetRemoteContentWithZendHttpClient($builder)
+    {
+        $builder->declareClass('Zend_Http_Client', 'Zend_Http_Client_Exception');
+
+        $code = "try {
+        \$http = new Zend_Http_Client(\$url);
+        \$reponse = \$http->request();
+        if (\$reponse->isSuccessful()) {
+            \$content = \$reponse->getBody();
+        } else {
+            \$content = false;
+        }
+    } catch (Zend_Http_Client_Exception \$e) {
+        \$content = false;
+    }";
+
+        return sprintf($this->getGetRemoteContentStub(), $code);
+    }
+
+    protected function addGetRemoteContentWithCurl()
+    {
+        $code = "\$c = curl_init();
+    curl_setopt(\$c, CURLOPT_RETURNTRANSFER, 1);
+    curl_setopt(\$c, CURLOPT_URL, \$url);
+    \$content = curl_exec(\$c);
+    curl_close(\$c);";
+
+        return sprintf($this->getGetRemoteContentStub(), $code);
+    }
+
+    protected function getGetRemoteContentStub()
+    {
+        return "/**
+ * Returns a content from a given url.
+ *
+ * @param string \$url  An url.
+ *
+ * @return string
+ */
+protected function getRemoteContent(\$url)
+{
+    %s
+
+    return \$content;
+}";
+    }
+
+    /**
+     * Get the setter of one of the columns of the behavior
+     *
+     * @param     string $column One of the behavior colums, 'latitude_column', 'longitude_column', or 'ip_column'
+     * @return    string The related setter, 'setLatitude', 'setLongitude', 'setIpAddress'
+     */
+    protected function getColumnSetter($column)
+    {
+        return 'set' . $this->getColumnForParameter($column)->getPhpName();
+    }
+
+    /**
+     * Get the getter of one of the columns of the behavior
+     *
+     * @param     string $column One of the behavior colums, 'latitude_column', 'longitude_column', or 'ip_column'
+     * @return    string The related getter, 'getLatitude', 'getLongitude', 'getIpAddress'
+     */
+    protected function getColumnGetter($column)
+    {
+        return 'get' . $this->getColumnForParameter($column)->getPhpName();
+    }
+
+    protected function getColumnConstant($columnName, $builder)
+    {
+        return $builder->getColumnConstant($this->getColumnForParameter($columnName));
     }
 }

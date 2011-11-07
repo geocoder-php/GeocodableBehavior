@@ -118,6 +118,28 @@ These parameters will be concatened and separated by a comma to make a street ad
 Now, each time you save your object, the two columns `latitude` and `longitude` are populated thanks to the Yahoo! PlaceFinder API.
 
 
+HTTP Client Methods
+-------------------
+
+This behavior provides four HTTP client methods to get data from APIs modifiable with the `http_client_method` parameter.
+
+The default method is [`cURL`](http://php.net/manual/book.curl.php) but you can use one of these methods:
+
+### buzz ###
+
+[Buzz](https://github.com/kriswallsmith/Buzz) is a lightweight PHP 5.3 library for issuing HTTP requests, so this method requires at least PHP 5.3.
+The `buzz` method will generate the proper code to use Buzz. You'll have to load this class yourself (or to configure a ClassLoader).
+
+### custom ###
+
+The `custom` method generates the `getRemoteContent()` method with an empty body. It's your job to override it and to add your own logic.
+This method accepts an URL (as a string) and returns a content (string as well).
+
+### zend_http_client ###
+
+The [`zend_http_client`](http://framework.zend.com/manual/fr/zend.http.client.advanced.html) method will generate the proper code to use a `Zend_Http_Client` instance. You'll have to load this class yourself.
+
+
 Parameters
 ----------
 
@@ -135,6 +157,8 @@ Parameters
     <parameter name="geocode_address" value="false" />
     <parameter name="address_columns" value="street,locality,region,postal_code,country" />
     <parameter name="yahoo_api_key" value="<YAHOO_API_KEY>" />
+
+    <parameter name="http_client_method" value="curl" />
 </behavior>
 ```
 
