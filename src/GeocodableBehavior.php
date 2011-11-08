@@ -203,7 +203,7 @@ public function filterByDistanceFrom(\$latitude, \$longitude, \$distance, \$unit
 {
     if ($peerName::MILES_UNIT === \$unit) {
         \$earthRadius = 3959;
-    } elseif ($peerName::MILES_UNIT === \$unit) {
+    } elseif ($peerName::NAUTICAL_MILES_UNIT === \$unit) {
         \$earthRadius = 3440;
     } else {
         \$earthRadius = 6371;
