@@ -183,7 +183,7 @@ public function getDistanceTo($className \${$objectName}, \$unit = $peerName::KI
 
     public function queryMethods($builder)
     {
-        $builder->declareClass('Criteria');
+        $builder->declareClass('Criteria', 'PDO');
 
         $queryClassName = $builder->getStubQueryBuilder()->getClassname();
         $peerName = $builder->getStubPeerBuilder()->getClassname();
@@ -222,7 +222,7 @@ public function filterByDistanceFrom(\$latitude, \$longitude, \$distance, \$unit
 
     return \$this
         ->withColumn(\$preparedSql, 'Distance')
-        ->having(sprintf('Distance %s %s', \$comparison, \$distance))
+        ->having(sprintf('Distance %s ?', \$comparison), \$distance, PDO::PARAM_STR)
         ;
 }
 ";
