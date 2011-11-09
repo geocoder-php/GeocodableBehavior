@@ -3,7 +3,7 @@ GeocodableBehavior
 
 The **GeocodableBehavior** helps you build geo-aware applications. It automatically geocodes your models when they are saved, giving you the ability to search by location and calculate distances between records.
 
-This behavior uses [Geocoder](https://github.com/willdurand/Geocoder), the Geocoder PHP 5.3 library.
+This behavior uses [Geocoder](https://github.com/willdurand/Geocoder), the Geocoder PHP 5.3 library and requires [Propel](http://github.com/propelorm/Propel) 1.6.4-dev and above.
 
 Installation
 ------------
