@@ -13,7 +13,8 @@ require_once dirname(__FILE__) . '/../../../tools/helpers/bookstore/BookstoreTes
 set_include_path(implode(PATH_SEPARATOR, array(
     get_include_path(),
     __DIR__.'/../../../vendor/',
-    __DIR__.'/../../../vendor/Buzz/lib/'
+    __DIR__.'/../../../vendor/Buzz/lib/',
+    __DIR__.'/../../../vendor/Geocoder/src/'
 )));
 
 /**
@@ -24,6 +25,13 @@ set_include_path(implode(PATH_SEPARATOR, array(
  */
 class GeocodableBehaviorTest extends BookstoreTestBase
 {
+    public function setUp()
+    {
+        require_once __DIR__.'/../../../vendor/Geocoder/src/autoload.php';
+
+        parent::setUp();
+    }
+
     public function testGetDistanceToInKilometers()
     {
         $geo1 = new GeocodedObject();
@@ -147,71 +155,60 @@ class GeocodableBehaviorTest extends BookstoreTestBase
     public function testGeocodeIp()
     {
         $geo = new GeocodedObject();
-        $geo->setIpAddress('81.22.10.60');
+        $geo->setIpAddress('74.200.247.59');
         $geo->save();
 
-        $this->assertEquals(55.75, $geo->getLatitude());
-        $this->assertEquals(37.583, $geo->getLongitude());
+        $this->assertEquals(33.036711, $geo->getLatitude());
+        $this->assertEquals(-96.813541, $geo->getLongitude());
     }
 
     public function testGeocodeAddress()
     {
         $geo = new GeocodedObject();
-        $geo->setStreet('8 rue du Nord');
-        $geo->setCity('Clermont-Ferrand');
+        $geo->setStreet('10 avenue Gambetta');
+        $geo->setCity('Paris');
         $geo->setCountry('France');
         $geo->save();
 
-        $this->assertEquals(45.776665, $geo->getLatitude());
-        $this->assertEquals(3.07723, $geo->getLongitude());
+        $this->assertEquals(48.863217, $geo->getLatitude());
+        $this->assertEquals(2.388821, $geo->getLongitude());
     }
 
     public function testGeocodeAddressWithUpdate()
     {
         $geo = new GeocodedObject();
-        $geo->setStreet('8 rue du Nord');
-        $geo->setCity('Clermont-Ferrand');
+        $geo->setStreet('10 avenue Gambetta');
+        $geo->setCity('Paris');
         $geo->setCountry('France');
         $geo->save();
 
-        $this->assertEquals(45.776665, $geo->getLatitude());
-        $this->assertEquals(3.07723, $geo->getLongitude());
+        $this->assertEquals(48.863217, $geo->getLatitude());
+        $this->assertEquals(2.388821, $geo->getLongitude());
 
         $geo->setStreet('1 avenue Léon Maniez');
         $geo->save();
 
-        $this->assertEquals(45.776665, $geo->getLatitude());
-        $this->assertEquals(3.07723, $geo->getLongitude());
+        $this->assertEquals(48.85693, $geo->getLatitude());
+        $this->assertEquals(2.3412, $geo->getLongitude());
     }
 
-    public function testGetRemoteContentWithBuzz()
+    public function testGeocodeAddressForceCoordinates()
     {
-        require_once 'Buzz/ClassLoader.php';
-        \Buzz\ClassLoader::register();
-
-        $geo = new GeocodedObjectWithBuzz();
-        $geo->setStreet('8 rue du Nord');
-        $geo->setCity('Clermont-Ferrand');
+        $geo = new GeocodedObject();
+        $geo->setStreet('10 avenue Gambetta');
+        $geo->setCity('Paris');
         $geo->setCountry('France');
         $geo->save();
 
-        $this->assertEquals(45.776665, $geo->getLatitude());
-        $this->assertEquals(3.07723, $geo->getLongitude());
-    }
+        $this->assertEquals(48.863217, $geo->getLatitude());
+        $this->assertEquals(2.388821, $geo->getLongitude());
 
-    public function testGetRemoteContentWithZendHttpClient()
-    {
-        require_once 'Zend/Loader/Autoloader.php';
-        require_once 'Zend/Http/Client.php';
-        Zend_Loader_Autoloader::getInstance();
-
-        $geo = new GeocodedObjectWithZendHttpClient();
-        $geo->setStreet('8 rue du Nord');
-        $geo->setCity('Clermont-Ferrand');
-        $geo->setCountry('France');
+        // If we force the values, we should by pass the geocoding process
+        $geo->setLatitude(48.85693);
+        $geo->setLongitude(2.3412);
         $geo->save();
 
-        $this->assertEquals(45.776665, $geo->getLatitude());
-        $this->assertEquals(3.07723, $geo->getLongitude());
+        $this->assertEquals(48.85693, $geo->getLatitude());
+        $this->assertEquals(2.3412, $geo->getLongitude());
     }
 }

@@ -22,13 +22,13 @@ class GeocodableBehavior extends Behavior
         // IP-based Geocoding
         'geocode_ip'            => 'false',
         'ip_column'             => 'ip_address',
-        'ipinfodb_api_key'      => '',
         // Address Geocoding
         'geocode_address'       => 'false',
         'address_columns'       => 'street,locality,region,postal_code,country',
-        'yahoo_api_key'         => '',
-
-        'http_client_method'    => 'curl'
+        // Geocoder
+        'geocoder_provider'     => '\Geocoder\Provider\YahooProvider',
+        'geocoder_adapter'      => '\Geocoder\HttpAdapter\CurlHttpAdapter',
+        'geocoder_api_key'      => 'false',
     );
 
     /**
@@ -76,17 +76,16 @@ const NAUTICAL_MILES_UNIT = 0.8684;
 
     public function preSave($builder)
     {
-        $script = '';
+        $apiKey = '';
+        if ('false' !== $this->getParameter('geocoder_api_key')) {
+            $apiKey = sprintf(', \'%s\'', $this->getParameter('geocoder_api_key'));
+        }
+        $script = "\$geocoder = new \Geocoder\Geocoder(new {$this->getParameter('geocoder_provider')}(new {$this->getParameter('geocoder_adapter')}()$apiKey));
+";
+
         if ('true' === $this->getParameter('geocode_ip')) {
-            $script .= "\$queryUrl = sprintf('http://api.ipinfodb.com/v3/ip-city/?key={$this->getParameter('ipinfodb_api_key')}&format=json&ip=%s', \$this->{$this->getColumnGetter('ip_column')}());
-\$json = \$this->getRemoteContent(\$queryUrl);
-if (false !== \$json) {
-    \$data = json_decode(\$json);
-    if (\$data->longitude && \$data->latitude) {
-        \$this->{$this->getColumnSetter('longitude_column')}(\$data->longitude);
-        \$this->{$this->getColumnSetter('latitude_column')}(\$data->latitude);
-    }
-}";
+            $script .= "\$geocoder->geocode(\$this->{$this->getColumnGetter('ip_column')}());
+";
         }
 
         if ('true' === $this->getParameter('geocode_address') && '' !== $this->getParameter('address_columns')) {
@@ -98,16 +97,20 @@ if (false !== \$json) {
                     $address .= ('' === $address) ? $getColStr : ".','.$getColStr";
                 }
             }
-            $script .= "\$queryUrl = sprintf('http://where.yahooapis.com/geocode?q=%s&flags=CJ&appid={$this->getParameter('yahoo_api_key')}', urlencode($address));
-\$json = \$this->getRemoteContent(\$queryUrl);
-if (false !== \$json) {
-    \$data = json_decode(\$json)->ResultSet->Results[0];
-    if (\$data->longitude && \$data->latitude) {
-        \$this->{$this->getColumnSetter('longitude_column')}(\$data->longitude);
-        \$this->{$this->getColumnSetter('latitude_column')}(\$data->latitude);
-    }
-}";
+            $script .= "\$geocoder->geocode($address);
+";
         }
+
+        $script .= "if (\$coordinates = \$geocoder->getCoordinates()) {
+        if (!\$this->isColumnModified(" . $this->getColumnConstant('latitude_column', $builder) . ")) {
+            \$this->{$this->getColumnSetter('latitude_column')}(\$coordinates[0]);
+        }
+
+        if (!\$this->isColumnModified(" . $this->getColumnConstant('longitude_column', $builder) . ")) {
+            \$this->{$this->getColumnSetter('longitude_column')}(\$coordinates[1]);
+        }
+    }
+";
 
         return $script;
     }
@@ -118,9 +121,7 @@ if (false !== \$json) {
         $objectName = strtolower($className);
         $peerName = $builder->getStubPeerBuilder()->getClassname();
 
-        return "{$this->addGetRemoteContent($builder)}
-
-/**
+        return "/**
  * Convenient method to set latitude and longitude values.
  *
  * @param double \$latitude     A latitude value.
@@ -226,80 +227,6 @@ public function filterByDistanceFrom(\$latitude, \$longitude, \$distance, \$unit
         ;
 }
 ";
-    }
-
-    protected function addGetRemoteContent($builder)
-    {
-        if ('zend_http_client' === $this->getParameter('http_client_method')) {
-            return $this->addGetRemoteContentWithZendHttpClient($builder);
-        } elseif ('buzz' === $this->getParameter('http_client_method')) {
-            return $this->addGetRemoteContentWithBuzz();
-        } elseif ('custom' === $this->getParameter('http_client_method')) {
-            return $this->addGetRemoteContentCustom();
-        }
-
-        return $this->addGetRemoteContentWithCurl();
-    }
-
-    protected function addGetRemoteContentCustom()
-    {
-        return preg_replace('/{.*/s', '{'.PHP_EOL.'}', $this->getGetRemoteContentStub());
-    }
-
-    protected function addGetRemoteContentWithBuzz()
-    {
-        $code = "\$browser = new \Buzz\Browser();
-    \$response = \$browser->get(\$url);
-    \$content = \$response->getContent();";
-
-        return sprintf($this->getGetRemoteContentStub(), $code);
-    }
-
-    protected function addGetRemoteContentWithZendHttpClient($builder)
-    {
-        $builder->declareClass('Zend_Http_Client', 'Zend_Http_Client_Exception');
-
-        $code = "try {
-        \$http = new Zend_Http_Client(\$url);
-        \$reponse = \$http->request();
-        if (\$reponse->isSuccessful()) {
-            \$content = \$reponse->getBody();
-        } else {
-            \$content = false;
-        }
-    } catch (Zend_Http_Client_Exception \$e) {
-        \$content = false;
-    }";
-
-        return sprintf($this->getGetRemoteContentStub(), $code);
-    }
-
-    protected function addGetRemoteContentWithCurl()
-    {
-        $code = "\$c = curl_init();
-    curl_setopt(\$c, CURLOPT_RETURNTRANSFER, 1);
-    curl_setopt(\$c, CURLOPT_URL, \$url);
-    \$content = curl_exec(\$c);
-    curl_close(\$c);";
-
-        return sprintf($this->getGetRemoteContentStub(), $code);
-    }
-
-    protected function getGetRemoteContentStub()
-    {
-        return "/**
- * Returns a content from a given url.
- *
- * @param string \$url  An url.
- *
- * @return string
- */
-protected function getRemoteContent(\$url)
-{
-    %s
-
-    return \$content;
-}";
     }
 
     /**
