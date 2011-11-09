@@ -3,11 +3,7 @@ GeocodableBehavior
 
 The **GeocodableBehavior** helps you build geo-aware applications. It automatically geocodes your models when they are saved, giving you the ability to search by location and calculate distances between records.
 
-This behavior uses two external APIs:
-
-* [IpInfoDB](http://www.ipinfodb.com/) for the IP-Based geocoding part;
-* [Yahoo! PlaceFinder](http://developer.yahoo.com/geo/placefinder/) for the Address-Based geocoding part.
-
+This behavior uses [Geocoder](https://github.com/willdurand/Geocoder), the Geocoder PHP 5.3 library.
 
 Installation
 ------------
@@ -83,9 +79,19 @@ To enable the IP-Based geocoding, add the following configuration in your `schem
 ``` xml
 <behavior name="geocodable">
     <parameter name="geocode_ip" value="true" />
-    <parameter name="ipinfodb_api_key" value="<IPINFODB_API_KEY>" />
+    <parameter name="geocoder_api_key" value="<API_KEY>" />
 </behavior>
 ```
+
+By default, the default Geocoder `provider` is `YahooProvider` so you'll need to fill in an API key.
+
+If you want to use another provider, you'll need to set a new parameter:
+
+``` xml
+<parameter name="geocoder_provider" value="\Geocoder\Provider\HostIpProvider" />
+```
+
+Read the **Geocoder** documentation to know more about providers.
 
 This configuration will add a new column to your model: `ip_address`. You can change the name of this column using the following parameter:
 
@@ -93,7 +99,7 @@ This configuration will add a new column to your model: `ip_address`. You can ch
 <parameter name="ip_column" value="ip" />
 ```
 
-The behavior will now use the `ip_address` value to populate the `latitude` and `longitude` columns thanks to the IpInfoDB API.
+The behavior will now use the `ip_address` value to populate the `latitude` and `longitude` columns thanks to **Geocoder**.
 
 
 ### Address-Based Geocoding ###
@@ -103,9 +109,19 @@ To enable the Address-Based geocoding, add the following configuration:
 ``` xml
 <behavior name="geocodable">
     <parameter name="geocode_address" value="true" />
-    <parameter name="yahoo_api_key" value="<YAHOO_API_KEY>" />
+    <parameter name="geocoder_api_key" value="<API_KEY>" />
 </behavior>
 ```
+
+By default, the default Geocoder `provider` is `YahooProvider` so you'll need to fill in an API key but keep in mind it's an optional parameter depending on the provider you choose.
+
+If you want to use another provider, you'll need to set a new parameter:
+
+``` xml
+<parameter name="geocoder_provider" value="\Geocoder\Provider\GoogleMapsProvider" />
+```
+
+Read the **Geocoder** documentation to know more about providers.
 
 Basically, the behavior looks for attributes called street, locality, region, postal_code, and country. It tries to make a complete address with them. As usual, you can tweak this parameter to add your own list of attributes that represents a complete street address:
 
@@ -115,29 +131,21 @@ Basically, the behavior looks for attributes called street, locality, region, po
 
 These parameters will be concatened and separated by a comma to make a street address. This address will be used to get `latitude` and `longitude` values.
 
-Now, each time you save your object, the two columns `latitude` and `longitude` are populated thanks to the Yahoo! PlaceFinder API.
+Now, each time you save your object, the two columns `latitude` and `longitude` are populated thanks to **Geocoder**.
 
 
-HTTP Client Methods
--------------------
+HTTP Adapters
+-------------
 
-This behavior provides four HTTP client methods to get data from APIs modifiable with the `http_client_method` parameter.
+**Geocoder** provides HTTP adapters which can be configured through the behavior. By default, this behavior uses the `CurlHttpAdapter`.
 
-The default method is [`cURL`](http://php.net/manual/book.curl.php) but you can use one of these methods:
+If you want to use another `adapter`, you'll need to use the following parameter:
 
-### buzz ###
+``` xml
+<parameter name="geocoder_adapter" name="\Geocoder\HttpAdapter\BuzzHttpAdapter" />
+```
 
-[Buzz](https://github.com/kriswallsmith/Buzz) is a lightweight PHP 5.3 library for issuing HTTP requests, so this method requires at least PHP 5.3.
-The `buzz` method will generate the proper code to use Buzz. You'll have to load this class yourself (or to configure a ClassLoader).
-
-### custom ###
-
-The `custom` method generates the `getRemoteContent()` method with an empty body. It's your job to override it and to add your own logic.
-This method accepts an URL (as a string) and returns a content (string as well).
-
-### zend_http_client ###
-
-The [`zend_http_client`](http://framework.zend.com/manual/fr/zend.http.client.advanced.html) method will generate the proper code to use a `Zend_Http_Client` instance. You'll have to load this class yourself.
+Read the **Geocoder** documentation to know more about adapters.
 
 
 Parameters
@@ -151,14 +159,15 @@ Parameters
     <!-- IP-Based Geocoding -->
     <parameter name="geocode_ip" value="false" />
     <parameter name="ip_column" value="ip_address" />
-    <parameter name="ipinfodb_api_key" value="<IPINFODB_API_KEY>" />
 
     <!-- Address-Based Geocoding -->
     <parameter name="geocode_address" value="false" />
     <parameter name="address_columns" value="street,locality,region,postal_code,country" />
-    <parameter name="yahoo_api_key" value="<YAHOO_API_KEY>" />
 
-    <parameter name="http_client_method" value="curl" />
+    <!-- Geocoder -->
+    <parameter name="geocoder_provider" value="\Geocoder\Provider\YahooProvider" />
+    <parameter name="geocoder_adapter" value="\Geocoder\HttpAdapter\CurlHttpAdapter" />
+    <parameter name="geocoder_api_key" value="false" />
 </behavior>
 ```
 
@@ -166,7 +175,7 @@ Parameters
 Credits
 -------
 
-* William Durand
+William Durand <william.durand1@gmail.com>
 
 
 Links
