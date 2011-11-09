@@ -10,43 +10,11 @@
         <behavior name="geocodable">
             <!-- IP -->
             <parameter name="geocode_ip" value="true" />
-            <parameter name="ipinfodb_api_key" value="c7d5921d409b89d406b327f223fce2345ff66bc96c71c050d664d2fe4c3e05c6" />
             <!-- Address -->
             <parameter name="geocode_address" value="true" />
             <parameter name="address_columns" value="street, city, country" />
-            <parameter name="yahoo_api_key" value="dj0yJmk9ZEZ5QnBOMUxCTXBhJmQ9WVdrOVJGSTBURFUyTlRJbWNHbzlOVEU1TXpNeU56WXkmcz1jb25zdW1lcnNlY3JldCZ4PWRk" />
-        </behavior>
-    </table>
-
-    <table name="geocoded_object_with_buzz">
-        <column name="id" required="true" primaryKey="true" autoIncrement="true" type="INTEGER" />
-        <column name="name" type="VARCHAR" size="100" primaryString="true" />
-        <column name="street" type="VARCHAR" size="100" primaryString="true" />
-        <column name="city" type="VARCHAR" size="100" primaryString="true" />
-        <column name="country" type="VARCHAR" size="100" primaryString="true" />
-
-        <behavior name="geocodable">
-            <!-- Address -->
-            <parameter name="geocode_address" value="true" />
-            <parameter name="address_columns" value="street, city, country" />
-            <parameter name="yahoo_api_key" value="dj0yJmk9ZEZ5QnBOMUxCTXBhJmQ9WVdrOVJGSTBURFUyTlRJbWNHbzlOVEU1TXpNeU56WXkmcz1jb25zdW1lcnNlY3JldCZ4PWRk" />
-            <parameter name="http_client_method" value="buzz" />
-        </behavior>
-    </table>
-
-    <table name="geocoded_object_with_zend_http_client">
-        <column name="id" required="true" primaryKey="true" autoIncrement="true" type="INTEGER" />
-        <column name="name" type="VARCHAR" size="100" primaryString="true" />
-        <column name="street" type="VARCHAR" size="100" primaryString="true" />
-        <column name="city" type="VARCHAR" size="100" primaryString="true" />
-        <column name="country" type="VARCHAR" size="100" primaryString="true" />
-
-        <behavior name="geocodable">
-            <!-- Address -->
-            <parameter name="geocode_address" value="true" />
-            <parameter name="address_columns" value="street, city, country" />
-            <parameter name="yahoo_api_key" value="dj0yJmk9ZEZ5QnBOMUxCTXBhJmQ9WVdrOVJGSTBURFUyTlRJbWNHbzlOVEU1TXpNeU56WXkmcz1jb25zdW1lcnNlY3JldCZ4PWRk" />
-            <parameter name="http_client_method" value="zend_http_client" />
+            <!-- Geocoder -->
+            <parameter name="geocoder_api_key" value=YOUR_API_KEY" />
         </behavior>
     </table>
 </database>
