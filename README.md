@@ -142,7 +142,7 @@ HTTP Adapters
 If you want to use another `adapter`, you'll need to use the following parameter:
 
 ``` xml
-<parameter name="geocoder_adapter" name="\Geocoder\HttpAdapter\BuzzHttpAdapter" />
+<parameter name="geocoder_adapter" value="\Geocoder\HttpAdapter\BuzzHttpAdapter" />
 ```
 
 Read the **Geocoder** documentation to know more about adapters.
