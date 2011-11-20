@@ -84,7 +84,7 @@ const NAUTICAL_MILES_UNIT = 0.8684;
 ";
 
         if ('true' === $this->getParameter('geocode_ip')) {
-            $script .= "\$geocoder->geocode(\$this->{$this->getColumnGetter('ip_column')}());
+            $script .= "\$result = \$geocoder->geocode(\$this->{$this->getColumnGetter('ip_column')}());
 ";
         }
 
@@ -97,11 +97,11 @@ const NAUTICAL_MILES_UNIT = 0.8684;
                     $address .= ('' === $address) ? $getColStr : ".','.$getColStr";
                 }
             }
-            $script .= "\$geocoder->geocode($address);
+            $script .= "\$result = \$geocoder->geocode($address);
 ";
         }
 
-        $script .= "if (\$coordinates = \$geocoder->getCoordinates()) {
+        $script .= "if (\$coordinates = \$result->getCoordinates()) {
         if (!\$this->isColumnModified(" . $this->getColumnConstant('latitude_column', $builder) . ")) {
             \$this->{$this->getColumnSetter('latitude_column')}(\$coordinates[0]);
         }
