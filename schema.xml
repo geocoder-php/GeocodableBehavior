@@ -14,7 +14,7 @@
             <parameter name="geocode_address" value="true" />
             <parameter name="address_columns" value="street, city, country" />
             <!-- Geocoder -->
-            <parameter name="geocoder_api_key" value=YOUR_API_KEY" />
+            <parameter name="geocoder_api_key" value="YOUR_API_KEY" />
         </behavior>
     </table>
 </database>
