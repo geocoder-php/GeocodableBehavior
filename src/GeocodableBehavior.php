@@ -48,7 +48,7 @@ class GeocodableBehavior extends Behavior
                 'type' => 'DOUBLE'
             ));
         }
-        if('true' === $this->getParameter('geocode_ip') && !$this->getTable()->containsColumn($this->getParameter('ip_address'))) {
+        if('true' === $this->getParameter('geocode_ip') && !$this->getTable()->containsColumn($this->getParameter('ip_column'))) {
             $this->getTable()->addColumn(array(
                 'name' => $this->getParameter('ip_column'),
                 'type' => 'CHAR',
@@ -80,36 +80,53 @@ const NAUTICAL_MILES_UNIT = 0.8684;
         if ('false' !== $this->getParameter('geocoder_api_key')) {
             $apiKey = sprintf(', \'%s\'', $this->getParameter('geocoder_api_key'));
         }
-        $script = "\$geocoder = new \Geocoder\Geocoder(new {$this->getParameter('geocoder_provider')}(new {$this->getParameter('geocoder_adapter')}()$apiKey));
+        $script = "if( (\$update_latitude = !\$this->isColumnModified(" . $this->getColumnConstant('latitude_column', $builder) . ")) &&
+    (\$update_longitude = !\$this->isColumnModified(" . $this->getColumnConstant('longitude_column', $builder) . "))
+    ) {
+";
+        $script .= "    \$geocoder = new \Geocoder\Geocoder(new {$this->getParameter('geocoder_provider')}(new {$this->getParameter('geocoder_adapter')}()$apiKey));
 ";
 
         if ('true' === $this->getParameter('geocode_ip')) {
-            $script .= "\$result = \$geocoder->geocode(\$this->{$this->getColumnGetter('ip_column')}());
+            $isModifiedIpStr = sprintf('$this->isColumnModified(%s)', $this->getColumnConstant('ip_column', $builder));
+            $script .= "    if($isModifiedIpStr) {
+      \$result = \$geocoder->geocode(\$this->{$this->getColumnGetter('ip_column')}());
+    }
 ";
         }
 
         if ('true' === $this->getParameter('geocode_address') && '' !== $this->getParameter('address_columns')) {
+            $script .= "    \$address_parts = array();
+    \$address_modified = false;
+";
             $table = $this->getTable();
             $address = '';
             foreach (explode(',', $this->getParameter('address_columns')) as $col) {
                 if ($column = $table->getColumn(trim($col))) {
+                    $isModifiedColStr = sprintf('$this->isColumnModified(%s)', $column->getConstantName());
                     $getColStr = sprintf('$this->get%s()', ucfirst($column->getPhpName()));
-                    $address .= ('' === $address) ? $getColStr : ".','.$getColStr";
+                    $script .= "    \$address_modified = \$address_modified || $isModifiedColStr;
+    \$address_parts['{$column->getPhpName()}'] = $getColStr;
+";
                 }
             }
-            $script .= "\$result = \$geocoder->geocode($address);
+            $script .= "    \$address = join(',', array_filter(\$address_parts));
+    if (\$address_modified) {
+        \$result = \$geocoder->geocode(\$address);
+    }
 ";
         }
 
-        $script .= "if (\$coordinates = \$result->getCoordinates()) {
-        if (!\$this->isColumnModified(" . $this->getColumnConstant('latitude_column', $builder) . ")) {
+        $script .= "    if (isset(\$result) && \$coordinates = \$result->getCoordinates()) {
+        if (\$update_latitude) {
             \$this->{$this->getColumnSetter('latitude_column')}(\$coordinates[0]);
         }
 
-        if (!\$this->isColumnModified(" . $this->getColumnConstant('longitude_column', $builder) . ")) {
+        if (\$update_longitude) {
             \$this->{$this->getColumnSetter('longitude_column')}(\$coordinates[1]);
         }
     }
+}
 ";
 
         return $script;
@@ -184,12 +201,21 @@ public function getDistanceTo($className \${$objectName}, \$unit = $peerName::KI
 
     public function queryMethods($builder)
     {
+        $table = $this->getTable();
+        foreach ($table->getColumns() as $col)
+        {
+          if ($col->isPrimaryKey())
+          {
+            $pks[] = "\$this->getModelAliasOrName().'.".$col->getPhpName()."'";
+          }
+        }
+
         $builder->declareClass('Criteria', 'PDO');
 
         $queryClassName = $builder->getStubQueryBuilder()->getClassname();
         $peerName = $builder->getStubPeerBuilder()->getClassname();
 
-        return "/**
+        return  "/**
  * Filters objects by distance from a given origin.
  *
  * @param	double \$latitude       The latitude of the origin point.
@@ -223,7 +249,7 @@ public function filterByDistanceFrom(\$latitude, \$longitude, \$distance, \$unit
 
     return \$this
         ->withColumn(\$preparedSql, 'Distance')
-        ->having(sprintf('Distance %s ?', \$comparison), \$distance, PDO::PARAM_STR)
+        ->where(sprintf('%s %s ?', \$preparedSql, \$comparison), \$distance, PDO::PARAM_STR)
         ;
 }
 ";
