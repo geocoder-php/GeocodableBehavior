@@ -151,7 +151,7 @@ Read the **Geocoder** documentation to know more about adapters.
 Parameters
 ----------
 
-``` xml
+```xml
 <behavior name="geocodable">
     <parameter name="latitude_column" value="latitude" />
     <parameter name="longitude_column" value="longitude" />
@@ -170,6 +170,8 @@ Parameters
     <parameter name="geocoder_api_key" value="false" />
 </behavior>
 ```
+
+This is the default configuration.
 
 
 Credits
