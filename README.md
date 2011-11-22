@@ -181,4 +181,4 @@ William Durand <william.durand1@gmail.com>
 Links
 -----
 
-* [https://github.com/collectiveidea/acts_as_geocodable](https://github.com/collectiveidea/acts_as_geocodable)
+[https://github.com/collectiveidea/acts_as_geocodable](https://github.com/collectiveidea/acts_as_geocodable)
