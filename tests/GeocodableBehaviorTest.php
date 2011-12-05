@@ -52,6 +52,25 @@ class GeocodableBehaviorTest extends PHPUnit_Framework_TestCase
             <parameter name="geocoder_api_key" value="YOUR_API_KEY" />
         </behavior>
     </table>
+
+    <table name="geocoded_object_no_autoupdate">
+        <column name="id" required="true" primaryKey="true" autoIncrement="true" type="INTEGER" />
+        <column name="name" type="VARCHAR" size="100" primaryString="true" />
+        <column name="street" type="VARCHAR" size="100" primaryString="true" />
+        <column name="city" type="VARCHAR" size="100" primaryString="true" />
+        <column name="country" type="VARCHAR" size="100" primaryString="true" />
+
+        <behavior name="geocodable">
+            <parameter name="auto_update" value="false" />
+            <!-- IP -->
+            <parameter name="geocode_ip" value="true" />
+            <!-- Address -->
+            <parameter name="geocode_address" value="true" />
+            <parameter name="address_columns" value="street, city, country" />
+            <!-- Geocoder -->
+            <parameter name="geocoder_api_key" value="YOUR_API_KEY" />
+        </behavior>
+    </table>
 </database>
 EOF;
             $builder = new PropelQuickBuilder();
@@ -266,5 +285,16 @@ EOF;
 
         $this->assertEquals(48.123456, $geo->getLatitude());
         $this->assertEquals(2.123456, $geo->getLongitude());
+    }
+
+    public function testNoAutoUpdate()
+    {
+        $geo = new GeocodedObjectNoAutoUpdate();
+        $geo->setStreet('10 avenue Gambetta');
+        $geo->setCity('Paris');
+        $geo->setCountry('France');
+        $geo->save();
+        $this->assertEquals(null, $geo->getLatitude());
+        $this->assertEquals(null, $geo->getLongitude());
     }
 }

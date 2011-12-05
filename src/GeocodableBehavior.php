@@ -17,6 +17,7 @@ class GeocodableBehavior extends Behavior
     // default parameters value
     protected $parameters = array(
         // Base
+        'auto_update'           => 'true',
         'latitude_column'       => 'latitude',
         'longitude_column'      => 'longitude',
         // IP-based Geocoding
@@ -76,56 +77,13 @@ const NAUTICAL_MILES_UNIT = 0.8684;
 
     public function preSave($builder)
     {
-        $apiKey = '';
-        if ('false' !== $this->getParameter('geocoder_api_key')) {
-            $apiKey = sprintf(', \'%s\'', $this->getParameter('geocoder_api_key'));
+        if ('false' === $this->getParameter('auto_update')) {
+          return "";
         }
         $script = "if( (\$update_latitude = !\$this->isColumnModified(" . $this->getColumnConstant('latitude_column', $builder) . ")) &&
     (\$update_longitude = !\$this->isColumnModified(" . $this->getColumnConstant('longitude_column', $builder) . "))
     ) {
-";
-        $script .= "    \$geocoder = new \Geocoder\Geocoder(new {$this->getParameter('geocoder_provider')}(new {$this->getParameter('geocoder_adapter')}()$apiKey));
-";
-
-        if ('true' === $this->getParameter('geocode_ip')) {
-            $isModifiedIpStr = sprintf('$this->isColumnModified(%s)', $this->getColumnConstant('ip_column', $builder));
-            $script .= "    if($isModifiedIpStr) {
-      \$result = \$geocoder->geocode(\$this->{$this->getColumnGetter('ip_column')}());
-    }
-";
-        }
-
-        if ('true' === $this->getParameter('geocode_address') && '' !== $this->getParameter('address_columns')) {
-            $script .= "    \$address_parts = array();
-    \$address_modified = false;
-";
-            $table = $this->getTable();
-            $address = '';
-            foreach (explode(',', $this->getParameter('address_columns')) as $col) {
-                if ($column = $table->getColumn(trim($col))) {
-                    $isModifiedColStr = sprintf('$this->isColumnModified(%s)', $column->getConstantName());
-                    $getColStr = sprintf('$this->get%s()', ucfirst($column->getPhpName()));
-                    $script .= "    \$address_modified = \$address_modified || $isModifiedColStr;
-    \$address_parts['{$column->getPhpName()}'] = $getColStr;
-";
-                }
-            }
-            $script .= "    \$address = join(',', array_filter(\$address_parts));
-    if (\$address_modified) {
-        \$result = \$geocoder->geocode(\$address);
-    }
-";
-        }
-
-        $script .= "    if (isset(\$result) && \$coordinates = \$result->getCoordinates()) {
-        if (\$update_latitude) {
-            \$this->{$this->getColumnSetter('latitude_column')}(\$coordinates[0]);
-        }
-
-        if (\$update_longitude) {
-            \$this->{$this->getColumnSetter('longitude_column')}(\$coordinates[1]);
-        }
-    }
+    \$this->geocode();
 }
 ";
 
@@ -138,7 +96,7 @@ const NAUTICAL_MILES_UNIT = 0.8684;
         $objectName = strtolower($className);
         $peerName = $builder->getStubPeerBuilder()->getClassname();
 
-        return "/**
+        $script = "/**
  * Convenient method to set latitude and longitude values.
  *
  * @param double \$latitude     A latitude value.
@@ -197,6 +155,62 @@ public function getDistanceTo($className \${$objectName}, \$unit = $peerName::KI
     return \$dist * $peerName::KILOMETERS_UNIT;
 }
 ";
+        $script .= "
+/**
+ * update geocode information
+ *
+ * @retrun $className
+ */
+public function geocode()
+{
+";
+
+        $apiKey = '';
+        if ('false' !== $this->getParameter('geocoder_api_key')) {
+            $apiKey = sprintf(', \'%s\'', $this->getParameter('geocoder_api_key'));
+        }
+        $script .= "    \$geocoder = new \Geocoder\Geocoder(new {$this->getParameter('geocoder_provider')}(new {$this->getParameter('geocoder_adapter')}()$apiKey));
+";
+
+        if ('true' === $this->getParameter('geocode_ip')) {
+            $isModifiedIpStr = sprintf('$this->isColumnModified(%s)', $this->getColumnConstant('ip_column', $builder));
+            $script .= "    if($isModifiedIpStr) {
+      \$result = \$geocoder->geocode(\$this->{$this->getColumnGetter('ip_column')}());
+    }
+";
+        }
+
+        if ('true' === $this->getParameter('geocode_address') && '' !== $this->getParameter('address_columns')) {
+            $script .= "    \$address_parts = array();
+    \$address_modified = false;
+";
+            $table = $this->getTable();
+            $address = '';
+            foreach (explode(',', $this->getParameter('address_columns')) as $col) {
+                if ($column = $table->getColumn(trim($col))) {
+                    $isModifiedColStr = sprintf('$this->isColumnModified(%s)', $column->getConstantName());
+                    $getColStr = sprintf('$this->get%s()', ucfirst($column->getPhpName()));
+                    $script .= "    \$address_modified = \$address_modified || $isModifiedColStr;
+    \$address_parts['{$column->getPhpName()}'] = $getColStr;
+";
+                }
+            }
+            $script .= "    \$address = join(',', array_filter(\$address_parts));
+    if (\$address_modified) {
+        \$result = \$geocoder->geocode(\$address);
+    }
+";
+        }
+
+        $script .= "    if (isset(\$result) && \$coordinates = \$result->getCoordinates()) {
+        \$this->{$this->getColumnSetter('latitude_column')}(\$coordinates[0]);
+        \$this->{$this->getColumnSetter('longitude_column')}(\$coordinates[1]);
+    }
+";
+        $script .= "
+}
+";
+        return $script;
     }
 
     public function queryMethods($builder)

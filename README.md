@@ -69,8 +69,10 @@ Automatic geocoding to the rescue! There are two automatic ways to get geocoded 
 * using IP addresses;
 * using street addresses.
 
-Note: You can use both at the same time.
+It provides a ```geocode``` method that autoupdate the loaction values.
+To prevent autofill when modified, just set ```auto_update``` attribute to false.
 
+Note: You can use both at the same time.
 
 ### IP-Based Geocoding ###
 
@@ -153,6 +155,8 @@ Parameters
 
 ```xml
 <behavior name="geocodable">
+    <parameter name="auto_update" value="true" />
+
     <parameter name="latitude_column" value="latitude" />
     <parameter name="longitude_column" value="longitude" />
 
