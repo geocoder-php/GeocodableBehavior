@@ -17,6 +17,7 @@ class GeocodableBehavior extends Behavior
     // default parameters value
     protected $parameters = array(
         // Base
+        'auto_update'           => 'true',
         'latitude_column'       => 'latitude',
         'longitude_column'      => 'longitude',
         // IP-based Geocoding
@@ -76,6 +77,9 @@ const NAUTICAL_MILES_UNIT = 0.8684;
 
     public function preSave($builder)
     {
+        if ('false' === $this->getParameter('auto_update')) {
+          return "";
+        }
         $script = "if( (\$update_latitude = !\$this->isColumnModified(" . $this->getColumnConstant('latitude_column', $builder) . ")) &&
     (\$update_longitude = !\$this->isColumnModified(" . $this->getColumnConstant('longitude_column', $builder) . "))
     ) {
