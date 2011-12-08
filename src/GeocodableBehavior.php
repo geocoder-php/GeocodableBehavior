@@ -80,9 +80,7 @@ const NAUTICAL_MILES_UNIT = 0.8684;
         if ('false' === $this->getParameter('auto_update')) {
           return "";
         }
-        $script = "if( (\$update_latitude = !\$this->isColumnModified(" . $this->getColumnConstant('latitude_column', $builder) . ")) &&
-    (\$update_longitude = !\$this->isColumnModified(" . $this->getColumnConstant('longitude_column', $builder) . "))
-    ) {
+        $script = "if (!\$this->isColumnModified(" . $this->getColumnConstant('latitude_column', $builder) . ") && !\$this->isColumnModified(" . $this->getColumnConstant('longitude_column', $builder) . ")) {
     \$this->geocode();
 }
 ";
