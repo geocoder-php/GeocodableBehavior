@@ -156,8 +156,6 @@ public function getDistanceTo($className \${$objectName}, \$unit = $peerName::KI
         $script .= "
 /**
  * update geocode information
- *
- * @retrun $className
  */
 public function geocode()
 {
