@@ -82,8 +82,11 @@ To enable the IP-Based geocoding, add the following configuration in your `schem
 <behavior name="geocodable">
     <parameter name="geocode_ip" value="true" />
     <parameter name="geocoder_api_key" value="<API_KEY>" />
+    <parameter name="geocoder_api_key_provider" value="<API_KEY_PROVIDER>" />
 </behavior>
 ```
+
+The ```geocoder_api_key_provider``` can be either a static method returning the api key. A class method in the format ```class()->method()``` or ```class()->method()->subMethod()```, or a class implementing ```getGoogleMapsKey``` wich must return the key.
 
 By default, the default Geocoder `provider` is `YahooProvider` so you'll need to fill in an API key.
 
@@ -172,6 +175,7 @@ Parameters
     <parameter name="geocoder_provider" value="\Geocoder\Provider\YahooProvider" />
     <parameter name="geocoder_adapter" value="\Geocoder\HttpAdapter\CurlHttpAdapter" />
     <parameter name="geocoder_api_key" value="false" />
+    <parameter name="geocoder_api_key_provider" value="false" />
 </behavior>
 ```
 
