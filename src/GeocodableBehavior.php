@@ -17,19 +17,20 @@ class GeocodableBehavior extends Behavior
     // default parameters value
     protected $parameters = array(
         // Base
-        'auto_update'           => 'true',
-        'latitude_column'       => 'latitude',
-        'longitude_column'      => 'longitude',
+        'auto_update'               => 'true',
+        'latitude_column'           => 'latitude',
+        'longitude_column'          => 'longitude',
         // IP-based Geocoding
-        'geocode_ip'            => 'false',
-        'ip_column'             => 'ip_address',
+        'geocode_ip'                => 'false',
+        'ip_column'                 => 'ip_address',
         // Address Geocoding
-        'geocode_address'       => 'false',
-        'address_columns'       => 'street,locality,region,postal_code,country',
+        'geocode_address'           => 'false',
+        'address_columns'           => 'street,locality,region,postal_code,country',
         // Geocoder
-        'geocoder_provider'     => '\Geocoder\Provider\YahooProvider',
-        'geocoder_adapter'      => '\Geocoder\HttpAdapter\CurlHttpAdapter',
-        'geocoder_api_key'      => 'false',
+        'geocoder_provider'         => '\Geocoder\Provider\YahooProvider',
+        'geocoder_adapter'          => '\Geocoder\HttpAdapter\CurlHttpAdapter',
+        'geocoder_api_key'          => 'false',
+        'geocoder_api_key_provider' => 'false',
     );
 
     /**
@@ -164,6 +165,20 @@ public function geocode()
         $apiKey = '';
         if ('false' !== $this->getParameter('geocoder_api_key')) {
             $apiKey = sprintf(', \'%s\'', $this->getParameter('geocoder_api_key'));
+        } else if ('false' !== $this->getParameter('geocoder_api_key_provider')) {
+            $provider = $this->getParameter('geocoder_api_key_provider');
+            if (false === strpos($provider, '::')) {
+                if (false === strpos('->')) {
+                    $script .= '    $provider = new ' . $provider . '();'."\n";
+                    $apiKey = ', $provider->getApiKey()';
+                } else {
+                    list($class, $method) = explode('->', $provider, 2);
+                    $script .= '    $provider = new ' . $class . ';'."\n";
+                    $apiKey = ', $provider->' . $method;
+                }
+            } else {
+                $apiKey = ', ' . $provider;
+            }
         }
         $script .= "    \$geocoder = new \Geocoder\Geocoder(new {$this->getParameter('geocoder_provider')}(new {$this->getParameter('geocoder_adapter')}()$apiKey));
 ";
