@@ -8,32 +8,16 @@
  * @license    MIT License
  */
 
-$propeldir = dirname(__FILE__) . '/../../../';
-require_once $propeldir . '/test/tools/helpers/bookstore/BookstoreTestBase.php';
-require_once $propeldir . '/generator/lib/util/PropelQuickBuilder.php';
-require_once $propeldir . '/generator/lib/behavior/GeocodableBehavior.php';
-require_once $propeldir . '/runtime/lib/Propel.php';
-require_once __DIR__ . '/GeoApikeyProvider.php';
-
-set_include_path(implode(PATH_SEPARATOR, array(
-    get_include_path(),
-    __DIR__.'/../../../vendor/',
-    __DIR__.'/../../../vendor/Buzz/lib/',
-    __DIR__.'/../../../vendor/Geocoder/src/'
-)));
-
 /**
  * Tests for GeocodableBehavior class
  *
- * @author     William Durand <william.durand1@gmail.com>
- * @package    generator.behavior
+ * @author William Durand <william.durand1@gmail.com>
  */
-class GeocodableBehaviorTest extends PHPUnit_Framework_TestCase
+class GeocodableBehaviorTest extends \PHPUnit_Framework_TestCase
 {
     public function setUp()
     {
         if (!class_exists('GeocodedObject')) {
-            require_once __DIR__.'/../../../vendor/Geocoder/src/autoload.php';
             $schema = <<<EOF
 <database name="bookstore" defaultIdMethod="native">
     <table name="geocoded_object">
@@ -129,10 +113,11 @@ class GeocodableBehaviorTest extends PHPUnit_Framework_TestCase
 </database>
 EOF;
             $builder = new PropelQuickBuilder();
-            $config = $builder->getConfig();
-            $config->setBuildProperty('behavior.geocodable.class', 'generator/lib/behavior/GeocodableBehavior');
+            $config  = $builder->getConfig();
+            $config->setBuildProperty('behavior.geocodable.class', '../src/GeocodableBehavior');
             $builder->setConfig($config);
             $builder->setSchema($schema);
+
             $con = $builder->build();
             $con->sqliteCreateFunction('ACOS', 'acos', 1);
             $con->sqliteCreateFunction('COS', 'cos', 1);

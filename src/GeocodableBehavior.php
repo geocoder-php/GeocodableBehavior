@@ -168,7 +168,7 @@ public function geocode()
         } else if ('false' !== $this->getParameter('geocoder_api_key_provider')) {
             $provider = $this->getParameter('geocoder_api_key_provider');
             if (false === strpos($provider, '::')) {
-                if (false === strpos('->')) {
+                if (false === strpos($provider, '->')) {
                     $script .= '    $provider = new ' . $provider . '();'."\n";
                     $apiKey = ', $provider->getApiKey()';
                 } else {

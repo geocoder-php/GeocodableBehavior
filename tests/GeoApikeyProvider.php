@@ -11,10 +11,9 @@
 /**
  * Dummy class for providing api keys.
  *
- * @author     Ulrik Nielsen <mr.base@gmail.com>
- * @package    generator.behavior
+ * @author Ulrik Nielsen <mr.base@gmail.com>
  */
-class GoogleApikeyProvider
+class GeoApikeyProvider
 {
     CONST KEY = 'ABQIAAAAUlCtnJfyCpB0HiNZhirLCxRnSy3HMd4FBmfa5RGCpEhkCZ57ohTX_pIptNo67DhWPTPD9hmt17-UBw';
 
@@ -25,11 +24,11 @@ class GoogleApikeyProvider
 
     public function getApiKey()
     {
-      return self::KEY;
+        return self::KEY;
     }
 
     public function getApiKeyMethod()
     {
-      return self::KEY;
+        return self::KEY;
     }
 }
