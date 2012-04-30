@@ -161,37 +161,36 @@ public function getDistanceTo($className \${$objectName}, \$unit = $peerName::KI
 public function geocode()
 {
 ";
-
-        $apiKey = '';
-        if ('false' !== $this->getParameter('geocoder_api_key')) {
-            $apiKey = sprintf(', \'%s\'', $this->getParameter('geocoder_api_key'));
-        } else if ('false' !== $this->getParameter('geocoder_api_key_provider')) {
-            $provider = $this->getParameter('geocoder_api_key_provider');
-            if (false === strpos($provider, '::')) {
-                if (false === strpos($provider, '->')) {
-                    $script .= '    $provider = new ' . $provider . '();'."\n";
-                    $apiKey = ', $provider->getApiKey()';
+        if ('true' === $this->getParameter('geocode_ip') || 'true' === $this->getParameter('geocode_address')) {
+            $apiKey = '';
+            if ('false' !== $this->getParameter('geocoder_api_key')) {
+                $apiKey = sprintf(', \'%s\'', $this->getParameter('geocoder_api_key'));
+            } else if ('false' !== $this->getParameter('geocoder_api_key_provider')) {
+                $provider = $this->getParameter('geocoder_api_key_provider');
+                if (false === strpos($provider, '::')) {
+                    if (false === strpos($provider, '->')) {
+                        $script .= '    $provider = new ' . $provider . '();'."\n";
+                        $apiKey = ', $provider->getApiKey()';
+                    } else {
+                        list($class, $method) = explode('->', $provider, 2);
+                        $script .= '    $provider = new ' . $class . ';'."\n";
+                        $apiKey = ', $provider->' . $method;
+                    }
                 } else {
-                    list($class, $method) = explode('->', $provider, 2);
-                    $script .= '    $provider = new ' . $class . ';'."\n";
-                    $apiKey = ', $provider->' . $method;
+                    $apiKey = ', ' . $provider;
                 }
-            } else {
-                $apiKey = ', ' . $provider;
             }
-        }
-        $script .= "    \$geocoder = new \Geocoder\Geocoder(new {$this->getParameter('geocoder_provider')}(new {$this->getParameter('geocoder_adapter')}()$apiKey));
+            $script .= "    \$geocoder = new \Geocoder\Geocoder(new {$this->getParameter('geocoder_provider')}(new {$this->getParameter('geocoder_adapter')}()$apiKey));
 ";
 
-        if ('true' === $this->getParameter('geocode_ip')) {
-            $isModifiedIpStr = sprintf('$this->isColumnModified(%s)', $this->getColumnConstant('ip_column', $builder));
-            $script .= "    if($isModifiedIpStr) {
+            if ('true' === $this->getParameter('geocode_ip')) {
+                $isModifiedIpStr = sprintf('$this->isColumnModified(%s)', $this->getColumnConstant('ip_column', $builder));
+                $script .= "    if($isModifiedIpStr) {
       \$result = \$geocoder->geocode(\$this->{$this->getColumnGetter('ip_column')}());
     }
 ";
-        }
+            }
 
-        if ('true' === $this->getParameter('geocode_address') && '' !== $this->getParameter('address_columns')) {
             $script .= "    \$address_parts = array();
     \$address_modified = false;
 ";
@@ -211,13 +210,16 @@ public function geocode()
         \$result = \$geocoder->geocode(\$address);
     }
 ";
-        }
 
-        $script .= "    if (isset(\$result) && \$coordinates = \$result->getCoordinates()) {
+            $script .= "    if (isset(\$result) && \$coordinates = \$result->getCoordinates()) {
         \$this->{$this->getColumnSetter('latitude_column')}(\$coordinates[0]);
         \$this->{$this->getColumnSetter('longitude_column')}(\$coordinates[1]);
     }
 ";
+        } else {
+            $script .= '    // Do nothing as both \'geocode_ip\', and \'geocode_address\' are turned off';
+        }
+
         $script .= "
 }
 ";
