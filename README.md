@@ -71,8 +71,33 @@ Automatic geocoding to the rescue! There are two automatic ways to get geocoded 
 * using IP addresses;
 * using street addresses.
 
-It provides a ```geocode``` method that autoupdate the loaction values.
+It provides a ```geocode()``` method that autoupdate the loaction values.
 To prevent autofill when modified, just set ```auto_update``` attribute to false.
+
+This method returns a `ResultInterface` object, so you can override this method to fill in more fields
+depending on your model:
+
+``` php
+<?php
+
+class MyObject extends BaseMyObject
+{
+    // ...
+
+    /**
+     * {@inheritdoc}
+     */
+    public function geocode()
+    {
+        if (null !== $result = parent::geocode()) {
+            if ($city = $result->getCity()) {
+                $this->setCity($city);
+            }
+        }
+
+        return $result;
+    }
+}
 
 Note: You can use both at the same time.
 
