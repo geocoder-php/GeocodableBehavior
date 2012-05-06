@@ -98,6 +98,7 @@ class MyObject extends BaseMyObject
         return $result;
     }
 }
+```
 
 Note: You can use both at the same time.
 
