@@ -370,4 +370,17 @@ EOF;
         $this->assertEquals(48.863217, $geo->getLatitude());
         $this->assertEquals(2.388821, $geo->getLongitude());
     }
+
+    public function testGeocode()
+    {
+        $geo = new GeocodedObject();
+        $this->assertNull($geo->geocode(), 'The method returns null as there is nothing to geocode');
+
+        $geo->setCity('Paris');
+        $result = $geo->geocode();
+
+        $this->assertInstanceOf('Geocoder\Result\ResultInterface', $result);
+        $this->assertEquals('Paris', $result->getCity());
+        $this->assertEquals('France', $result->getCountry());
+    }
 }
