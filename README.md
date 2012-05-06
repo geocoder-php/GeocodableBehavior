@@ -74,7 +74,7 @@ Automatic geocoding to the rescue! There are two automatic ways to get geocoded 
 It provides a ```geocode()``` method that autoupdate the loaction values.
 To prevent autofill when modified, just set ```auto_update``` attribute to false.
 
-This method returns a `ResultInterface` object, so you can override this method to fill in more fields
+This method returns a [`ResultInterface`](https://github.com/willdurand/Geocoder/blob/master/src/Geocoder/Result/ResultInterface.php) object, so you can override this method to fill in more fields
 depending on your model:
 
 ``` php
