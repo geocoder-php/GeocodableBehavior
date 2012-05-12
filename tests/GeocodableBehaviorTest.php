@@ -20,6 +20,11 @@ class GeocodableBehaviorTest extends \PHPUnit_Framework_TestCase
         if (!class_exists('GeocodedObject')) {
             $schema = <<<EOF
 <database name="bookstore" defaultIdMethod="native">
+    <table name="simple_geocoded_object">
+        <column name="id" required="true" primaryKey="true" autoIncrement="true" type="INTEGER" />
+        <behavior name="geocodable" />
+    </table>
+
     <table name="geocoded_object">
         <column name="id" required="true" primaryKey="true" autoIncrement="true" type="INTEGER" />
         <column name="name" type="VARCHAR" size="100" primaryString="true" />
@@ -375,12 +380,22 @@ EOF;
     {
         $geo = new GeocodedObject();
         $this->assertNull($geo->geocode(), 'The method returns null as there is nothing to geocode');
+        $this->assertFalse($geo->isModified());
 
         $geo->setCity('Paris');
         $result = $geo->geocode();
 
+        $this->assertTrue($geo->isModified());
         $this->assertInstanceOf('Geocoder\Result\ResultInterface', $result);
         $this->assertEquals('Paris', $result->getCity());
         $this->assertEquals('France', $result->getCountry());
+    }
+
+    public function testGeocodeIsEffectLessIfGeocodingDisabled()
+    {
+        $geo = new SimpleGeocodedObject();
+
+        $geo->geocode();
+        $this->assertFalse($geo->isModified());
     }
 }
