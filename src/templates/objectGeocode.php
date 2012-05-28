@@ -3,7 +3,7 @@
  * Update geocode information.
  * You can extend this method to fill in other fields.
  *
- * @return \Geocoder\geocodedResult\geocodedResultInterface|null
+ * @return \Geocoder\GeocodedResult\GeocodedResultInterface|null
  */
 public function geocode()
 {
