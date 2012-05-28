@@ -131,6 +131,30 @@ EOF;
         }
     }
 
+    public function testObjectMethods()
+    {
+        $this->assertTrue(method_exists('GeocodedObject', 'getLatitude'));
+        $this->assertTrue(method_exists('GeocodedObject', 'getLongitude'));
+        $this->assertTrue(method_exists('GeocodedObject', 'geocode'));
+        $this->assertTrue(method_exists('GeocodedObject', 'isGeocoded'));
+        $this->assertTrue(method_exists('GeocodedObject', 'getDistanceTo'));
+        $this->assertTrue(method_exists('GeocodedObject', 'getCoordinates'));
+        $this->assertTrue(method_exists('GeocodedObject', 'setCoordinates'));
+    }
+
+    public function testQueryMethods()
+    {
+        $this->assertTrue(method_exists('GeocodedObjectQuery', 'filterByDistanceFrom'));
+        $this->assertTrue(method_exists('GeocodedObjectQuery', 'filterNear'));
+    }
+
+    public function testPeerConstants()
+    {
+        $this->assertTrue(defined('GeocodedObjectPeer::KILOMETERS_UNIT'));
+        $this->assertTrue(defined('GeocodedObjectPeer::MILES_UNIT'));
+        $this->assertTrue(defined('GeocodedObjectPeer::NAUTICAL_MILES_UNIT'));
+    }
+
     public function testGetDistanceToInKilometers()
     {
         $geo1 = new GeocodedObject();
