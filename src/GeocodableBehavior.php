@@ -34,6 +34,11 @@ class GeocodableBehavior extends Behavior
     );
 
     /**
+     * @var GeocodableBehaviorQueryBuilderModifier
+     */
+    protected $queryBuilderModifier;
+
+    /**
      * Add the latitude_column, longitude_column, ip_column to the current table
      */
     public function modifyTable()
@@ -61,32 +66,19 @@ class GeocodableBehavior extends Behavior
 
     public function staticAttributes($builder)
     {
-		return "/**
- * Kilometers unit
- */
-const KILOMETERS_UNIT = 1.609344;
-/**
- * Miles unit
- */
-const MILES_UNIT = 1.1515;
-/**
- * Nautical miles unit
- */
-const NAUTICAL_MILES_UNIT = 0.8684;
-";
+        return $this->renderTemplate('staticAttributes');
     }
 
     public function preSave($builder)
     {
         if ('false' === $this->getParameter('auto_update')) {
-          return "";
+            return '';
         }
-        $script = "if (!\$this->isColumnModified(" . $this->getColumnConstant('latitude_column', $builder) . ") && !\$this->isColumnModified(" . $this->getColumnConstant('longitude_column', $builder) . ")) {
-    \$this->geocode();
-}
-";
 
-        return $script;
+        return $this->renderTemplate('objectPreSave', array(
+            'longitudeColumnConstant'   => $this->getColumnConstant('longitude_column', $builder),
+            'latitudeColumnConstant'    => $this->getColumnConstant('latitude_column', $builder),
+        ));
     }
 
     public function objectMethods($builder)
@@ -172,60 +164,16 @@ const NAUTICAL_MILES_UNIT = 0.8684;
         return $script;
     }
 
-    public function queryMethods($builder)
+    /**
+     * {@inheritdoc}
+     */
+    public function getQueryBuilderModifier()
     {
-        $table = $this->getTable();
-        foreach ($table->getColumns() as $col)
-        {
-          if ($col->isPrimaryKey())
-          {
-            $pks[] = "\$this->getModelAliasOrName().'.".$col->getPhpName()."'";
-          }
+        if (null === $this->queryBuilderModifier) {
+            $this->queryBuilderModifier = new GeocodableBehaviorQueryBuilderModifier($this);
         }
 
-        $builder->declareClass('Criteria', 'PDO');
-
-        $queryClassName = $builder->getStubQueryBuilder()->getClassname();
-        $peerName = $builder->getStubPeerBuilder()->getClassname();
-
-        return  "/**
- * Filters objects by distance from a given origin.
- *
- * @param	double \$latitude       The latitude of the origin point.
- * @param	double \$longitude      The longitude of the origin point.
- * @param	double \$distance       The distance between the origin and the objects to find.
- * @param	\$unit                  The unit measure.
- * @param	Criteria \$comparison   Comparison sign (default is: `<`).
- *
- * @return	$queryClassName The current query, for fluid interface
- */
-public function filterByDistanceFrom(\$latitude, \$longitude, \$distance, \$unit = $peerName::KILOMETERS_UNIT, \$comparison = Criteria::LESS_THAN)
-{
-    if ($peerName::MILES_UNIT === \$unit) {
-        \$earthRadius = 3959;
-    } elseif ($peerName::NAUTICAL_MILES_UNIT === \$unit) {
-        \$earthRadius = 3440;
-    } else {
-        \$earthRadius = 6371;
-    }
-
-    \$sql = 'ABS(%s * ACOS(%s * COS(RADIANS(%s)) * COS(RADIANS(%s) - %s) + %s * SIN(RADIANS(%s))))';
-    \$preparedSql = sprintf(\$sql,
-        \$earthRadius,
-        cos(deg2rad(\$latitude)),
-        \$this->getAliasedColName({$this->getColumnConstant('latitude_column', $builder)}),
-        \$this->getAliasedColName({$this->getColumnConstant('longitude_column', $builder)}),
-        deg2rad(\$longitude),
-        sin(deg2rad(\$latitude)),
-        \$this->getAliasedColName({$this->getColumnConstant('latitude_column', $builder)})
-    );
-
-    return \$this
-        ->withColumn(\$preparedSql, 'Distance')
-        ->where(sprintf('%s %s ?', \$preparedSql, \$comparison), \$distance, PDO::PARAM_STR)
-        ;
-}
-";
+        return $this->queryBuilderModifier;
     }
 
     /**
@@ -245,13 +193,13 @@ public function filterByDistanceFrom(\$latitude, \$longitude, \$distance, \$unit
      * @param     string $column One of the behavior colums, 'latitude_column', 'longitude_column', or 'ip_column'
      * @return    string The related getter, 'getLatitude', 'getLongitude', 'getIpAddress'
      */
-    protected function getColumnGetter($column)
+    public function getColumnGetter($column)
     {
         return 'get' . $this->getColumnForParameter($column)->getPhpName();
     }
 
-    protected function getColumnConstant($columnName, $builder)
+    public function getColumnConstant($columnName, $builder)
     {
         return $builder->getColumnConstant($this->getColumnForParameter($columnName));
     }
-    }
+}

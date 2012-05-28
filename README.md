@@ -36,7 +36,8 @@ Basically, the behavior will add:
 * two new columns to your model (`latitude` and `longitude`);
 * four new methods to the _ActiveRecord_ API (`getDistanceTo()`, `isGeocoded()`,
 `getCoordinates()`, and `setCoordinates()`);
-* a new method to the _ActiveQuery_ API (`filterByDistanceFrom()`).
+* two new methods to the _ActiveQuery_ API (`filterByDistanceFrom()`,
+`filterNear()`).
 
 
 ### ActiveRecord API ###
@@ -66,9 +67,15 @@ and longitude values.
 defined in the `Peer` class of the geocoded model);
 * a comparison sign (`Criteria::LESS_THAN` is the default value).
 
-
 It will add a filter by distance on your current query and returns itself for
 fluid interface.
+
+`filterNear` takes three arguments:
+
+* a model object;
+* a distance value;
+* a measure unit (`KILOMETERS_UNIT`, `MILES_UNIT`, or `NAUTICAL_MILES_UNIT`
+defined in the `Peer` class of the geocoded model).
 
 
 Automatic Geocoding
