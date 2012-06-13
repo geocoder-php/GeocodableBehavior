@@ -2,7 +2,7 @@
 /**
  * Returns whether this object has been geocoded or not.
  *
- * @return Boolean
+ * @return boolean
  */
 public function isGeocoded()
 {

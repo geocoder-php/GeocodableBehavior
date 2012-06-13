@@ -3,7 +3,7 @@
  * Calculates the distance between a given <?php echo $objectName ?> and this one.
  *
  * @param <?php echo $className ?> <?php echo $variableName ?>    A <?php echo $className ?> object.
- * @param $unit     The unit measure.
+ * @param double $unit     The unit measure.
  *
  * @return double   The distance between the two objects.
  */
