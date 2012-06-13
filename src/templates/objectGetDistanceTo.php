@@ -13,7 +13,7 @@ public function getDistanceTo(<?php echo $className ?> <?php echo $variableName 
 
     if (<?php echo $peerName ?>::MILES_UNIT === $unit) {
         return $dist;
-    } else if (<?php echo $peerName ?>::NAUTICAL_MILES_UNIT === $unit) {
+    } elseif (<?php echo $peerName ?>::NAUTICAL_MILES_UNIT === $unit) {
         return $dist * <?php echo $peerName ?>::NAUTICAL_MILES_UNIT;
     }
 

@@ -43,19 +43,19 @@ class GeocodableBehavior extends Behavior
      */
     public function modifyTable()
     {
-        if(!$this->getTable()->containsColumn($this->getParameter('latitude_column'))) {
+        if (!$this->getTable()->containsColumn($this->getParameter('latitude_column'))) {
             $this->getTable()->addColumn(array(
                 'name' => $this->getParameter('latitude_column'),
                 'type' => 'DOUBLE'
             ));
         }
-        if(!$this->getTable()->containsColumn($this->getParameter('longitude_column'))) {
+        if (!$this->getTable()->containsColumn($this->getParameter('longitude_column'))) {
             $this->getTable()->addColumn(array(
                 'name' => $this->getParameter('longitude_column'),
                 'type' => 'DOUBLE'
             ));
         }
-        if('true' === $this->getParameter('geocode_ip') && !$this->getTable()->containsColumn($this->getParameter('ip_column'))) {
+        if ('true' === $this->getParameter('geocode_ip') && !$this->getTable()->containsColumn($this->getParameter('ip_column'))) {
             $this->getTable()->addColumn(array(
                 'name' => $this->getParameter('ip_column'),
                 'type' => 'CHAR',
@@ -179,8 +179,8 @@ class GeocodableBehavior extends Behavior
     /**
      * Get the setter of one of the columns of the behavior
      *
-     * @param     string $column One of the behavior colums, 'latitude_column', 'longitude_column', or 'ip_column'
-     * @return    string The related setter, 'setLatitude', 'setLongitude', 'setIpAddress'
+     * @param  string $column One of the behavior colums, 'latitude_column', 'longitude_column', or 'ip_column'
+     * @return string The related setter, 'setLatitude', 'setLongitude', 'setIpAddress'
      */
     protected function getColumnSetter($column)
     {
@@ -190,8 +190,8 @@ class GeocodableBehavior extends Behavior
     /**
      * Get the getter of one of the columns of the behavior
      *
-     * @param     string $column One of the behavior colums, 'latitude_column', 'longitude_column', or 'ip_column'
-     * @return    string The related getter, 'getLatitude', 'getLongitude', 'getIpAddress'
+     * @param  string $column One of the behavior colums, 'latitude_column', 'longitude_column', or 'ip_column'
+     * @return string The related getter, 'getLatitude', 'getLongitude', 'getIpAddress'
      */
     public function getColumnGetter($column)
     {
