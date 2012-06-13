@@ -4,7 +4,7 @@
  *
  * @param <?php echo $objectClassName ?> $<?php echo $variableName ?> A <?php echo $objectClassName ?> object.
  * @param double $distance The distance between the origin and the objects to find.
- * @param $unit            The unit measure.
+ * @param double $unit     The unit measure.
  *
  * @return <?php echo $queryClassName ?> The current query, for fluid interface
  */

@@ -5,7 +5,7 @@
  * @param double $latitude       The latitude of the origin point.
  * @param double $longitude      The longitude of the origin point.
  * @param double $distance       The distance between the origin and the objects to find.
- * @param $unit                  The unit measure.
+ * @param double $unit           The unit measure.
  * @param Criteria $comparison   Comparison sign (default is: `<`).
  *
  * @return <?php echo $queryClassName ?> The current query, for fluid interface
