@@ -1,0 +1,300 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <title>Geocodablebehavior by willdurand</title>
+
+    <link rel="stylesheet" href="stylesheets/styles.css">
+    <link rel="stylesheet" href="stylesheets/pygment_trac.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+  </head>
+  <body>
+    <div class="wrapper">
+      <header>
+        <h1>Geocodablebehavior</h1>
+        <p>Propel Geocodable Behavior</p>
+        <p class="view"><a href="https://github.com/willdurand/GeocodableBehavior">View the Project on GitHub <small>willdurand/GeocodableBehavior</small></a></p>
+        <ul>
+          <li><a href="https://github.com/willdurand/GeocodableBehavior/zipball/master">Download <strong>ZIP File</strong></a></li>
+          <li><a href="https://github.com/willdurand/GeocodableBehavior/tarball/master">Download <strong>TAR Ball</strong></a></li>
+          <li><a href="https://github.com/willdurand/GeocodableBehavior">View On <strong>GitHub</strong></a></li>
+        </ul>
+      </header>
+      <section>
+        <h1>GeocodableBehavior</h1>
+
+<p><a href="http://travis-ci.org/willdurand/GeocodableBehavior"><img src="https://secure.travis-ci.org/willdurand/GeocodableBehavior.png" alt="Build Status"></a></p>
+
+<p>The <strong>GeocodableBehavior</strong> helps you build geo-aware applications. It automatically
+geocodes your models when they are saved, giving you the ability to search by
+location and calculate distances between records.</p>
+
+<p>This behavior uses <a href="https://github.com/willdurand/Geocoder">Geocoder</a>, the
+Geocoder PHP 5.3 library and requires <a href="http://github.com/propelorm/Propel">Propel</a>
+1.6.4-dev and above.</p>
+
+<h2>Installation</h2>
+
+<p>Cherry-pick the <code>GeocodableBehavior.php</code> file is <code>src/</code>, put it somewhere,
+then add the following line to your <code>propel.ini</code> or <code>build.properties</code>
+configuration file:</p>
+
+<div class="highlight">
+<pre><span class="na">propel.behavior.geocodable.class</span> <span class="o">=</span> <span class="s">path.to.GeocodableBehavior</span>
+</pre>
+</div>
+
+
+<h2>Usage</h2>
+
+<p>Just add the following XML tag in your <code>schema.xml</code> file:</p>
+
+<div class="highlight">
+<pre><span class="nt">&lt;behavior</span> <span class="na">name=</span><span class="s">"geocodable"</span> <span class="nt">/&gt;</span>
+</pre>
+</div>
+
+
+<p>Basically, the behavior will add:</p>
+
+<ul>
+<li>two new columns to your model (<code>latitude</code> and <code>longitude</code>);</li>
+<li>four new methods to the <em>ActiveRecord</em> API (<code>getDistanceTo()</code>, <code>isGeocoded()</code>,
+<code>getCoordinates()</code>, and <code>setCoordinates()</code>);</li>
+<li>two new methods to the <em>ActiveQuery</em> API (<code>filterByDistanceFrom()</code>,
+<code>filterNear()</code>).</li>
+</ul><h3>ActiveRecord API</h3>
+
+<p><code>getDistanceTo()</code> returns the distance between the current object and a given one.
+The method takes two arguments:</p>
+
+<ul>
+<li>a geocoded object;</li>
+<li>a measure unit (<code>KILOMETERS_UNIT</code>, <code>MILES_UNIT</code>, or <code>NAUTICAL_MILES_UNIT</code>
+defined in the <code>Peer</code> class of the geocoded model).</li>
+</ul><p><code>isGeocoded()</code> returns a boolean value whether the object has been geocoded,
+or not.</p>
+
+<p><code>getCoordinates()</code>, <code>setCoordinates()</code> allows to quickly set/get latitude,
+and longitude values.</p>
+
+<h3>ActiveQuery API</h3>
+
+<p><code>filterByDistanceFrom()</code> takes five arguments:</p>
+
+<ul>
+<li>a latitude value;</li>
+<li>a longitude value;</li>
+<li>a distance value;</li>
+<li>a measure unit (<code>KILOMETERS_UNIT</code>, <code>MILES_UNIT</code>, or <code>NAUTICAL_MILES_UNIT</code>
+defined in the <code>Peer</code> class of the geocoded model);</li>
+<li>a comparison sign (<code>Criteria::LESS_THAN</code> is the default value).</li>
+</ul><p>It will add a filter by distance on your current query and returns itself for
+fluid interface.</p>
+
+<p><code>filterNear</code> takes three arguments:</p>
+
+<ul>
+<li>a model object;</li>
+<li>a distance value;</li>
+<li>a measure unit (<code>KILOMETERS_UNIT</code>, <code>MILES_UNIT</code>, or <code>NAUTICAL_MILES_UNIT</code>
+defined in the <code>Peer</code> class of the geocoded model).</li>
+</ul><h2>Automatic Geocoding</h2>
+
+<p>At this step, you have to fill in the two columns (<code>latitude</code> and <code>longitude</code>)
+yourself. It's not really useful, right ?</p>
+
+<p>Automatic geocoding to the rescue! There are two automatic ways to get geocoded
+information:</p>
+
+<ul>
+<li>using IP addresses;</li>
+<li>using street addresses.</li>
+</ul><p>It provides a <code>geocode()</code> method that autoupdate the loaction values.
+To prevent autofill when modified, just set <code>auto_update</code> attribute to false.</p>
+
+<p>This method returns a <a href="https://github.com/willdurand/Geocoder/blob/master/src/Geocoder/Result/ResultInterface.php"><code>ResultInterface</code></a>
+object, so you can override this method to fill in more fields depending on your
+model:</p>
+
+<div class="highlight">
+<pre><span class="cp">&lt;?php</span>
+
+<span class="k">class</span> <span class="nc">MyObject</span> <span class="k">extends</span> <span class="nx">BaseMyObject</span>
+<span class="p">{</span>
+    <span class="c1">// ...</span>
+
+    <span class="sd">/**</span>
+<span class="sd">     * {@inheritdoc}</span>
+<span class="sd">     */</span>
+    <span class="k">public</span> <span class="k">function</span> <span class="nf">geocode</span><span class="p">()</span>
+    <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="k">null</span> <span class="o">!==</span> <span class="nv">$result</span> <span class="o">=</span> <span class="k">parent</span><span class="o">::</span><span class="na">geocode</span><span class="p">())</span> <span class="p">{</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nv">$city</span> <span class="o">=</span> <span class="nv">$result</span><span class="o">-&gt;</span><span class="na">getCity</span><span class="p">())</span> <span class="p">{</span>
+                <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">setCity</span><span class="p">(</span><span class="nv">$city</span><span class="p">);</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+
+        <span class="k">return</span> <span class="nv">$result</span><span class="p">;</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre>
+</div>
+
+
+<p>Note: You can use both at the same time.</p>
+
+<h3>IP-Based Geocoding</h3>
+
+<p>To enable the IP-Based geocoding, add the following configuration in your
+<code>schema.xml</code> file:</p>
+
+<div class="highlight">
+<pre><span class="nt">&lt;behavior</span> <span class="na">name=</span><span class="s">"geocodable"</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;parameter</span> <span class="na">name=</span><span class="s">"geocode_ip"</span> <span class="na">value=</span><span class="s">"true"</span> <span class="nt">/&gt;</span>
+    <span class="nt">&lt;parameter</span> <span class="na">name=</span><span class="s">"geocoder_api_key"</span> <span class="na">value=</span><span class="s">"&lt;API_KEY&gt;"</span> <span class="nt">/&gt;</span>
+    <span class="nt">&lt;parameter</span> <span class="na">name=</span><span class="s">"geocoder_api_key_provider"</span> <span class="na">value=</span><span class="s">"&lt;API_KEY_PROVIDER&gt;"</span> <span class="nt">/&gt;</span>
+<span class="nt">&lt;/behavior&gt;</span>
+</pre>
+</div>
+
+
+<p>The <code>geocoder_api_key_provider</code> can be either a static method returning the api
+key. A class method in the format <code>class()-&gt;method()</code> or
+<code>class()-&gt;method()-&gt;subMethod()</code>, or a class implementing <code>getGoogleMapsKey</code>
+which must return the key.</p>
+
+<p>By default, the default Geocoder <code>provider</code> is <code>YahooProvider</code> so you'll need to
+fill in an API key.</p>
+
+<p>If you want to use another provider, you'll need to set a new parameter:</p>
+
+<div class="highlight">
+<pre><span class="nt">&lt;parameter</span> <span class="na">name=</span><span class="s">"geocoder_provider"</span> <span class="na">value=</span><span class="s">"\Geocoder\Provider\HostIpProvider"</span> <span class="nt">/&gt;</span>
+</pre>
+</div>
+
+
+<p>Read the <strong>Geocoder</strong> documentation to know more about providers.</p>
+
+<p>This configuration will add a new column to your model: <code>ip_address</code>.
+You can change the name of this column using the following parameter:</p>
+
+<div class="highlight">
+<pre><span class="nt">&lt;parameter</span> <span class="na">name=</span><span class="s">"ip_column"</span> <span class="na">value=</span><span class="s">"ip"</span> <span class="nt">/&gt;</span>
+</pre>
+</div>
+
+
+<p>The behavior will now use the <code>ip_address</code> value to populate the <code>latitude</code>,and
+<code>longitude</code> columns thanks to <strong>Geocoder</strong>.</p>
+
+<h3>Address-Based Geocoding </h3>
+
+<p>To enable the Address-Based geocoding, add the following configuration:</p>
+
+<div class="highlight">
+<pre><span class="nt">&lt;behavior</span> <span class="na">name=</span><span class="s">"geocodable"</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;parameter</span> <span class="na">name=</span><span class="s">"geocode_address"</span> <span class="na">value=</span><span class="s">"true"</span> <span class="nt">/&gt;</span>
+    <span class="nt">&lt;parameter</span> <span class="na">name=</span><span class="s">"geocoder_api_key"</span> <span class="na">value=</span><span class="s">"&lt;API_KEY&gt;"</span> <span class="nt">/&gt;</span>
+<span class="nt">&lt;/behavior&gt;</span>
+</pre>
+</div>
+
+
+<p>By default, the default Geocoder <code>provider</code> is <code>YahooProvider</code> so you'll need to
+fill in an API key but keep in mind it's an optional parameter depending on the
+provider you choose.</p>
+
+<p>If you want to use another provider, you'll need to set a new parameter:</p>
+
+<div class="highlight">
+<pre><span class="nt">&lt;parameter</span> <span class="na">name=</span><span class="s">"geocoder_provider"</span> <span class="na">value=</span><span class="s">"\Geocoder\Provider\GoogleMapsProvider"</span> <span class="nt">/&gt;</span>
+</pre>
+</div>
+
+
+<p>Read the <strong>Geocoder</strong> documentation to know more about providers.</p>
+
+<p>Basically, the behavior looks for attributes called street, locality, region,
+fpostal_code, and country. It tries to make a complete address with them.
+As usual, you can tweak this parameter to add your own list of attributes that
+represents a complete street address:</p>
+
+<div class="highlight">
+<pre><span class="nt">&lt;parameter</span> <span class="na">name=</span><span class="s">"address_columns"</span> <span class="na">value=</span><span class="s">"street,locality,region,postal_code,country"</span> <span class="nt">/&gt;</span>
+</pre>
+</div>
+
+
+<p>These parameters will be concatened and separated by a comma to make a street
+address. This address will be used to get <code>latitude</code> and <code>longitude</code> values.</p>
+
+<p>Now, each time you save your object, the two columns <code>latitude</code>, and <code>longitude</code>
+are populated thanks to <strong>Geocoder</strong>.</p>
+
+<h2>HTTP Adapters</h2>
+
+<p><strong>Geocoder</strong> provides HTTP adapters which can be configured through the behavior.
+By default, this behavior uses the <code>CurlHttpAdapter</code>.</p>
+
+<p>If you want to use another <code>adapter</code>, you'll need to use the following parameter:</p>
+
+<div class="highlight">
+<pre><span class="nt">&lt;parameter</span> <span class="na">name=</span><span class="s">"geocoder_adapter"</span> <span class="na">value=</span><span class="s">"\Geocoder\HttpAdapter\BuzzHttpAdapter"</span> <span class="nt">/&gt;</span>
+</pre>
+</div>
+
+
+<p>Read the <strong>Geocoder</strong> documentation to know more about adapters.</p>
+
+<h2>Parameters</h2>
+
+<div class="highlight">
+<pre><span class="nt">&lt;behavior</span> <span class="na">name=</span><span class="s">"geocodable"</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;parameter</span> <span class="na">name=</span><span class="s">"auto_update"</span> <span class="na">value=</span><span class="s">"true"</span> <span class="nt">/&gt;</span>
+
+    <span class="nt">&lt;parameter</span> <span class="na">name=</span><span class="s">"latitude_column"</span> <span class="na">value=</span><span class="s">"latitude"</span> <span class="nt">/&gt;</span>
+    <span class="nt">&lt;parameter</span> <span class="na">name=</span><span class="s">"longitude_column"</span> <span class="na">value=</span><span class="s">"longitude"</span> <span class="nt">/&gt;</span>
+
+    <span class="c">&lt;!-- IP-Based Geocoding --&gt;</span>
+    <span class="nt">&lt;parameter</span> <span class="na">name=</span><span class="s">"geocode_ip"</span> <span class="na">value=</span><span class="s">"false"</span> <span class="nt">/&gt;</span>
+    <span class="nt">&lt;parameter</span> <span class="na">name=</span><span class="s">"ip_column"</span> <span class="na">value=</span><span class="s">"ip_address"</span> <span class="nt">/&gt;</span>
+
+    <span class="c">&lt;!-- Address-Based Geocoding --&gt;</span>
+    <span class="nt">&lt;parameter</span> <span class="na">name=</span><span class="s">"geocode_address"</span> <span class="na">value=</span><span class="s">"false"</span> <span class="nt">/&gt;</span>
+    <span class="nt">&lt;parameter</span> <span class="na">name=</span><span class="s">"address_columns"</span> <span class="na">value=</span><span class="s">"street,locality,region,postal_code,country"</span> <span class="nt">/&gt;</span>
+
+    <span class="c">&lt;!-- Geocoder --&gt;</span>
+    <span class="nt">&lt;parameter</span> <span class="na">name=</span><span class="s">"geocoder_provider"</span> <span class="na">value=</span><span class="s">"\Geocoder\Provider\YahooProvider"</span> <span class="nt">/&gt;</span>
+    <span class="nt">&lt;parameter</span> <span class="na">name=</span><span class="s">"geocoder_adapter"</span> <span class="na">value=</span><span class="s">"\Geocoder\HttpAdapter\CurlHttpAdapter"</span> <span class="nt">/&gt;</span>
+    <span class="nt">&lt;parameter</span> <span class="na">name=</span><span class="s">"geocoder_api_key"</span> <span class="na">value=</span><span class="s">"false"</span> <span class="nt">/&gt;</span>
+    <span class="nt">&lt;parameter</span> <span class="na">name=</span><span class="s">"geocoder_api_key_provider"</span> <span class="na">value=</span><span class="s">"false"</span> <span class="nt">/&gt;</span>
+<span class="nt">&lt;/behavior&gt;</span>
+</pre>
+</div>
+
+
+<p>This is the default configuration.</p>
+
+<h2>Credits</h2>
+
+<p>William Durand <a href="mailto:william.durand1@gmail.com">william.durand1@gmail.com</a></p>
+
+<h2>Links</h2>
+
+<p><a href="https://github.com/collectiveidea/acts_as_geocodable">https://github.com/collectiveidea/acts_as_geocodable</a></p>
+      </section>
+      <footer>
+        <p>This project is maintained by <a href="https://github.com/willdurand">willdurand</a></p>
+        <p><small>Hosted on GitHub Pages &mdash; Theme by <a href="https://github.com/orderedlist">orderedlist</a></small></p>
+      </footer>
+    </div>
+    <script src="javascripts/scale.fix.js"></script>
+    
+  </body>
+</html>
