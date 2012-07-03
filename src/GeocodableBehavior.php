@@ -88,6 +88,8 @@ class GeocodableBehavior extends Behavior
         $objectName = strtolower($className);
         $peerName   = $builder->getStubPeerBuilder()->getClassname();
 
+        $builder->declareClassFromBuilder($builder->getStubObjectBuilder());
+
         $script .= $this->renderTemplate('objectSetCoordinates', array(
             'latitudeSetter'  => $this->getColumnSetter('latitude_column'),
             'longitudeSetter' => $this->getColumnSetter('longitude_column'),
@@ -125,13 +127,20 @@ class GeocodableBehavior extends Behavior
 
                 if (false === strpos($apiKeyProvider, '::')) {
                     if (false === strpos($apiKeyProvider, '->')) {
+                        $builder->declareClass($apiKeyProvider);
+
                         $apiKey = ', $provider->getApiKey()';
                     } else {
                         list($class, $method) = explode('->', $apiKeyProvider, 2);
+                        $builder->declareClass($class);
+
                         $apiKeyProvider = $class . '()';
                         $apiKey         = ', $provider->' . $method;
                     }
                 } else {
+                    $class  = substr($apiKeyProvider, 0, strpos($apiKeyProvider, '::'));
+                    $builder->declareClass($class);
+
                     $apiKey = ', ' . $apiKeyProvider;
                     $apiKeyProvider = false;
                 }
