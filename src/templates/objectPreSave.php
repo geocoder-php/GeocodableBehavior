@@ -1,4 +1,4 @@
 
-if (!$this->isColumnModified(<?php echo $latitudeColumnConstant ?>) && !$this->isColumnModified(<?php echo $longitudeColumnConstant ?>)) {
+if ($this->isGeocodingNecessary()) {
     $this->geocode();
 }

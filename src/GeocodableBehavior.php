@@ -75,10 +75,7 @@ class GeocodableBehavior extends Behavior
             return '';
         }
 
-        return $this->renderTemplate('objectPreSave', array(
-            'longitudeColumnConstant'   => $this->getColumnConstant('longitude_column', $builder),
-            'latitudeColumnConstant'    => $this->getColumnConstant('latitude_column', $builder),
-        ));
+        return $this->renderTemplate('objectPreSave');
     }
 
     public function objectMethods($builder)
@@ -153,7 +150,7 @@ class GeocodableBehavior extends Behavior
                 }
             }
 
-            $script .= $this->renderTemplate('objectGeocode', array(
+            $templateOptions = array(
                 'apiKeyProvider'    => $apiKeyProvider,
                 'apiKey'            => $apiKey,
                 'columns'           => $columns,
@@ -165,7 +162,17 @@ class GeocodableBehavior extends Behavior
                 'geocoderAdapter'   => $this->getParameter('geocoder_adapter'),
                 'latitudeSetter'    => $this->getColumnSetter('latitude_column'),
                 'longitudeSetter'   => $this->getColumnSetter('longitude_column'),
-            ));
+                'longitudeColumnConstant'   => $this->getColumnConstant('longitude_column', $builder),
+                'latitudeColumnConstant'    => $this->getColumnConstant('latitude_column', $builder),
+            );
+
+            $script .= $this->renderTemplate('objectGetGeocoder', $templateOptions);
+            $script .= $this->renderTemplate('objectGeocode', $templateOptions);
+            if ($templateOptions['geocodeAddress']) {
+                $script .= $this->renderTemplate('objectGetAddressParts', $templateOptions);
+                $script .= $this->renderTemplate('objectHasAddressChanged', $templateOptions);
+            }
+            $script .= $this->renderTemplate('objectIsGeocodingNecessary', $templateOptions);
         } else {
             $script .= $this->renderTemplate('objectGeocodeEmpty');
         }
