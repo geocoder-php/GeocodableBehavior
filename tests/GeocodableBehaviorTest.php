@@ -137,6 +137,7 @@ EOF;
         $this->assertTrue(method_exists('GeocodedObject', 'getLongitude'));
         $this->assertTrue(method_exists('GeocodedObject', 'geocode'));
         $this->assertTrue(method_exists('GeocodedObject', 'isGeocoded'));
+        $this->assertTrue(method_exists('GeocodedObject', 'isGeocodingNecessary'));
         $this->assertTrue(method_exists('GeocodedObject', 'getDistanceTo'));
         $this->assertTrue(method_exists('GeocodedObject', 'getCoordinates'));
         $this->assertTrue(method_exists('GeocodedObject', 'setCoordinates'));
