@@ -113,7 +113,13 @@ class GeocodableBehavior extends Behavior
             'longitudeGetter' => $this->getColumnGetter('longitude_column'),
         ));
 
-        if ('true' === $this->getParameter('geocode_ip') || 'true' === $this->getParameter('geocode_address')) {
+        $templateOptions = array(
+            'geocodeIp'         => 'true' === $this->getParameter('geocode_ip'),
+            'geocodeAddress'    => 'true' === $this->getParameter('geocode_address') && '' !== $this->getParameter('address_columns'),
+        );
+
+        if ($templateOptions['geocodeIp'] || $templateOptions['geocodeAddress']) {
+
             $apiKey = '';
             $apiKeyProvider = false;
 
@@ -150,12 +156,10 @@ class GeocodableBehavior extends Behavior
                 }
             }
 
-            $templateOptions = array(
+            $templateOptions = array_merge($templateOptions, array(
                 'apiKeyProvider'    => $apiKeyProvider,
                 'apiKey'            => $apiKey,
                 'columns'           => $columns,
-                'geocodeIp'         => 'true' === $this->getParameter('geocode_ip'),
-                'geocodeAddress'    => 'true' === $this->getParameter('geocode_address') && '' !== $this->getParameter('address_columns'),
                 'ipColumnConstant'  => 'true' === $this->getParameter('geocode_ip') ? $this->getColumnConstant('ip_column', $builder) : '',
                 'ipColumnGetter'    => 'true' === $this->getParameter('geocode_ip') ? $this->getColumnGetter('ip_column') : '',
                 'geocoderProvider'  => $this->getParameter('geocoder_provider'),
@@ -164,7 +168,7 @@ class GeocodableBehavior extends Behavior
                 'longitudeSetter'   => $this->getColumnSetter('longitude_column'),
                 'longitudeColumnConstant'   => $this->getColumnConstant('longitude_column', $builder),
                 'latitudeColumnConstant'    => $this->getColumnConstant('latitude_column', $builder),
-            );
+            ));
 
             $script .= $this->renderTemplate('objectGetGeocoder', $templateOptions);
             $script .= $this->renderTemplate('objectGeocode', $templateOptions);
@@ -172,10 +176,11 @@ class GeocodableBehavior extends Behavior
                 $script .= $this->renderTemplate('objectGetAddressParts', $templateOptions);
                 $script .= $this->renderTemplate('objectHasAddressChanged', $templateOptions);
             }
-            $script .= $this->renderTemplate('objectIsGeocodingNecessary', $templateOptions);
         } else {
             $script .= $this->renderTemplate('objectGeocodeEmpty');
         }
+
+        $script .= $this->renderTemplate('objectIsGeocodingNecessary', $templateOptions);
 
         return $script;
     }
