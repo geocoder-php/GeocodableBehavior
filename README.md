@@ -90,7 +90,7 @@ information:
 * using IP addresses;
 * using street addresses.
 
-It provides a `geocode()` method that autoupdate the loaction values.
+It provides a `geocode()` method that autoupdate the location values.
 To prevent autofill when modified, just set `auto_update` attribute to false.
 
 This method returns a [`ResultInterface`](https://github.com/willdurand/Geocoder/blob/master/src/Geocoder/Result/ResultInterface.php)
@@ -194,7 +194,7 @@ represents a complete street address:
 <parameter name="address_columns" value="street,locality,region,postal_code,country" />
 ```
 
-These parameters will be concatened and separated by a comma to make a street
+These parameters will be concatenated and separated by a comma to make a street
 address. This address will be used to get `latitude` and `longitude` values.
 
 Now, each time you save your object, the two columns `latitude`, and `longitude`

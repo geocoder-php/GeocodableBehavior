@@ -200,7 +200,7 @@ class GeocodableBehavior extends Behavior
     /**
      * Get the setter of one of the columns of the behavior
      *
-     * @param  string $column One of the behavior colums, 'latitude_column', 'longitude_column', or 'ip_column'
+     * @param  string $column One of the behavior columns, 'latitude_column', 'longitude_column', or 'ip_column'
      * @return string The related setter, 'setLatitude', 'setLongitude', 'setIpAddress'
      */
     protected function getColumnSetter($column)
@@ -211,7 +211,7 @@ class GeocodableBehavior extends Behavior
     /**
      * Get the getter of one of the columns of the behavior
      *
-     * @param  string $column One of the behavior colums, 'latitude_column', 'longitude_column', or 'ip_column'
+     * @param  string $column One of the behavior columns, 'latitude_column', 'longitude_column', or 'ip_column'
      * @return string The related getter, 'getLatitude', 'getLongitude', 'getIpAddress'
      */
     public function getColumnGetter($column)
