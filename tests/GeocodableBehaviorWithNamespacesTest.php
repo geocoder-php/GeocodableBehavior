@@ -291,8 +291,8 @@ EOF;
         $geo->setIpAddress('74.200.247.59');
         $geo->save();
 
-        $this->assertEquals(33.036711, $geo->getLatitude());
-        $this->assertEquals(-96.813541, $geo->getLongitude());
+        $this->assertEquals(37.7486, $geo->getLatitude(), '', 0.001);
+        $this->assertEquals(-122.4158, $geo->getLongitude(), '', 0.001);
     }
 
     public function testGeocodeAddress()
@@ -303,8 +303,8 @@ EOF;
         $geo->setCountry('France');
         $geo->save();
 
-        $this->assertEquals(48.863217, $geo->getLatitude());
-        $this->assertEquals(2.388821, $geo->getLongitude());
+        $this->assertEquals(48.863217, $geo->getLatitude(), '', 0.001);
+        $this->assertEquals(2.388821, $geo->getLongitude(), '', 0.001);
     }
 
     public function testGeocodeAddressWithUpdate()
@@ -315,14 +315,14 @@ EOF;
         $geo->setCountry('France');
         $geo->save();
 
-        $this->assertEquals(48.863217, $geo->getLatitude());
-        $this->assertEquals(2.388821, $geo->getLongitude());
+        $this->assertEquals(48.863217, $geo->getLatitude(), '', 0.001);
+        $this->assertEquals(2.388821, $geo->getLongitude(), '', 0.001);
 
         $geo->setStreet('1 avenue Léon Maniez');
         $geo->save();
 
-        $this->assertEquals(48.85693, $geo->getLatitude());
-        $this->assertEquals(2.3412, $geo->getLongitude());
+        $this->assertEquals(48.8526, $geo->getLatitude(), '', 0.001);
+        $this->assertEquals(2.36235, $geo->getLongitude(), '', 0.001);
     }
 
     public function testGeocodeAddressForceCoordinates()
@@ -333,16 +333,16 @@ EOF;
         $geo->setCountry('France');
         $geo->save();
 
-        $this->assertEquals(48.863217, $geo->getLatitude());
-        $this->assertEquals(2.388821, $geo->getLongitude());
+        $this->assertEquals(48.863217, $geo->getLatitude(), '', 0.001);
+        $this->assertEquals(2.388821, $geo->getLongitude(), '', 0.001);
 
         // If we force the values, we should bypass the geocoding process
         $geo->setLatitude(48.85693);
         $geo->setLongitude(2.3412);
         $geo->save();
 
-        $this->assertEquals(48.85693, $geo->getLatitude());
-        $this->assertEquals(2.3412, $geo->getLongitude());
+        $this->assertEquals(48.8563, $geo->getLatitude(), '', 0.001);
+        $this->assertEquals(2.3412, $geo->getLongitude(), '', 0.001);
     }
 
     public function testNoFieldUpdate()
@@ -362,8 +362,8 @@ EOF;
         $geo->setLongitude(2.123456);
         $geo->save();
 
-        $this->assertEquals(48.123456, $geo->getLatitude());
-        $this->assertEquals(2.123456, $geo->getLongitude());
+        $this->assertEquals(48.123456, $geo->getLatitude(), '', 0.001);
+        $this->assertEquals(2.123456, $geo->getLongitude(), '', 0.001);
     }
 
     public function testNoAutoUpdate()
@@ -384,8 +384,8 @@ EOF;
         $geo->setCity('Paris');
         $geo->setCountry('France');
         $geo->save();
-        $this->assertEquals(48.863217, $geo->getLatitude());
-        $this->assertEquals(2.388821, $geo->getLongitude());
+        $this->assertEquals(48.863217, $geo->getLatitude(), '', 0.001);
+        $this->assertEquals(2.388821, $geo->getLongitude(), '', 0.001);
     }
 
     public function testKeyProviderStatic()
@@ -395,8 +395,8 @@ EOF;
         $geo->setCity('Paris');
         $geo->setCountry('France');
         $geo->save();
-        $this->assertEquals(48.863217, $geo->getLatitude());
-        $this->assertEquals(2.388821, $geo->getLongitude());
+        $this->assertEquals(48.863217, $geo->getLatitude(), '', 0.001);
+        $this->assertEquals(2.388821, $geo->getLongitude(), '', 0.001);
     }
 
     public function testKeyProviderMethod()
@@ -406,8 +406,8 @@ EOF;
         $geo->setCity('Paris');
         $geo->setCountry('France');
         $geo->save();
-        $this->assertEquals(48.863217, $geo->getLatitude());
-        $this->assertEquals(2.388821, $geo->getLongitude());
+        $this->assertEquals(48.863217, $geo->getLatitude(), '', 0.001);
+        $this->assertEquals(2.388821, $geo->getLongitude(), '', 0.001);
     }
 
     public function testGeocode()

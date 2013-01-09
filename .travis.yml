@@ -6,6 +6,6 @@ php:
 
 before_script:
     - curl -s http://getcomposer.org/installer | php
-    - php composer.phar --dev install
+    - php composer.phar require propel/propel1:dev-master --dev --prefer-dist
 
 script: phpunit --coverage-text

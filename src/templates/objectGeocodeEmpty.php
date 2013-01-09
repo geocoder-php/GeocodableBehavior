@@ -8,6 +8,5 @@
 public function geocode()
 {
     // Do nothing as both 'geocode_ip', and 'geocode_address' are turned off.
-
     return null;
 }

@@ -10,7 +10,7 @@
     ],
     "require": {
         "php": ">=5.2.4",
-        "propel/propel1": ">=1.6.4"
+        "propel/propel1": ">=1.6.4,<1.7"
     },
     "require-dev": {
         "willdurand/geocoder": "dev-master"
@@ -18,5 +18,5 @@
     "autoload": {
         "classmap": ["src/"]
     },
-    "minimum-stability": "dev"
+    "license": "MIT"
 }
