@@ -1,4 +1,3 @@
-
 /**
  * Filters objects near a given <?php echo $objectClassName ?> object.
  *
@@ -12,8 +11,8 @@ public function filterNear(<?php echo $objectClassName ?> $<?php echo $variableN
 {
     return $this
         ->filterByDistanceFrom(
-            $<?php echo $objectClassName ?>-><?php echo $latitudeColumnGetter ?>(),
-            $<?php echo $objectClassName ?>-><?php echo $longitudeColumnGetter ?>(),
+            $<?php echo $variableName ?>-><?php echo $latitudeColumnGetter ?>(),
+            $<?php echo $variableName ?>-><?php echo $longitudeColumnGetter ?>(),
             $distance, $unit
         );
 }
