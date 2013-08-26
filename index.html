@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="chrome=1">
-    <title>Geocodablebehavior by willdurand</title>
+    <title>GeocodableBehavior | Geocoder - The almost missing Geocoder PHP library!</title>
 
     <link rel="stylesheet" href="stylesheets/styles.css">
     <link rel="stylesheet" href="stylesheets/pygment_trac.css">
@@ -15,28 +15,29 @@
   <body>
     <div class="wrapper">
       <header>
-        <h1>Geocodablebehavior</h1>
-        <p>Propel Geocodable Behavior</p>
+        <h1><a href="http://geocoder-php.org/">Geocoder</a></h1>
+        <p>The almost missing Geocoder PHP library!</p>
 
-        <p class="view"><a href="https://github.com/willdurand/GeocodableBehavior">View the Project on GitHub <small>willdurand/GeocodableBehavior</small></a></p>
-
+        <p class="view"><a href="https://github.com/geocoder-php/GeocodableBehavior">View the Project on GitHub <small>geocoder-php/GeocodableBehavior</small></a></p>
 
         <ul>
-          <li><a href="https://github.com/willdurand/GeocodableBehavior/zipball/master">Download <strong>ZIP File</strong></a></li>
-          <li><a href="https://github.com/willdurand/GeocodableBehavior/tarball/master">Download <strong>TAR Ball</strong></a></li>
-          <li><a href="https://github.com/willdurand/GeocodableBehavior">View On <strong>GitHub</strong></a></li>
+          <li><a href="https://github.com/geocoder-php/GeocodableBehavior/zipball/master">Download <strong>ZIP File</strong></a></li>
+          <li><a href="https://github.com/geocoder-php/GeocodableBehavior/tarball/master">Download <strong>TAR Ball</strong></a></li>
+          <li><a href="https://github.com/geocoder-php/GeocodableBehavior">View On <strong>GitHub</strong></a></li>
         </ul>
       </header>
       <section>
         <h1>GeocodableBehavior</h1>
 
-<p><a href="http://travis-ci.org/willdurand/GeocodableBehavior"><img src="https://secure.travis-ci.org/willdurand/GeocodableBehavior.png" alt="Build Status"></a></p>
+        <p>
+            <a href="http://travis-ci.org/geocoder-php/GeocodableBehavior"><img src="https://secure.travis-ci.org/geocoder-php/GeocodableBehavior.png" alt="Build Status"></a>
+        </p>
 
 <p>The <strong>GeocodableBehavior</strong> helps you build geo-aware applications. It automatically
 geocodes your models when they are saved, giving you the ability to search by
 location and calculate distances between records.</p>
 
-<p>This behavior uses <a href="https://github.com/willdurand/Geocoder">Geocoder</a>, the
+<p>This behavior uses <a href="https://github.com/geocoder-php/Geocoder">Geocoder</a>, the
 Geocoder PHP 5.3 library and requires <a href="http://github.com/propelorm/Propel">Propel</a>
 1.6.4-dev and above.</p>
 
@@ -114,7 +115,7 @@ information:</p>
 </ul><p>It provides a <code>geocode()</code> method that autoupdate the loaction values.
 To prevent autofill when modified, just set <code>auto_update</code> attribute to false.</p>
 
-<p>This method returns a <a href="https://github.com/willdurand/Geocoder/blob/master/src/Geocoder/Result/ResultInterface.php"><code>ResultInterface</code></a>
+<p>This method returns a <a href="https://github.com/geocoder-php/Geocoder/blob/master/src/Geocoder/Result/ResultInterface.php"><code>ResultInterface</code></a>
 object, so you can override this method to fill in more fields depending on your
 model:</p>
 
@@ -260,11 +261,14 @@ By default, this behavior uses the <code>CurlHttpAdapter</code>.</p>
 <p><a href="https://github.com/collectiveidea/acts_as_geocodable">https://github.com/collectiveidea/acts_as_geocodable</a></p>
       </section>
       <footer>
-        <p>This project is maintained by <a href="https://github.com/willdurand">willdurand</a></p>
+        <p>
+        This project is maintained by <a href="https://github.com/willdurand">William Durand</a> and
+        <a href="https://github.com/geocoder-php?tab=members">awesome people</a>.
+        </p>
         <p><small>Hosted on GitHub Pages &mdash; Theme by <a href="https://github.com/orderedlist">orderedlist</a></small></p>
       </footer>
     </div>
     <script src="javascripts/scale.fix.js"></script>
-    
+
   </body>
 </html>
