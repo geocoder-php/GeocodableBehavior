@@ -1,13 +1,13 @@
 GeocodableBehavior
 ==================
 
-[![Build Status](https://secure.travis-ci.org/willdurand/GeocodableBehavior.png)](http://travis-ci.org/willdurand/GeocodableBehavior)
+[![Build Status](https://secure.travis-ci.org/geocoder-php/GeocodableBehavior.png)](http://travis-ci.org/geocoder-php/GeocodableBehavior)
 
 The **GeocodableBehavior** helps you build geo-aware applications. It automatically
 geocodes your models when they are saved, giving you the ability to search by
 location and calculate distances between records.
 
-This behavior uses [Geocoder](https://github.com/willdurand/Geocoder), the
+This behavior uses [Geocoder](https://github.com/geocoder-php/Geocoder), the
 Geocoder PHP 5.3 library and requires [Propel](http://github.com/propelorm/Propel)
 1.6.4-dev and above.
 
@@ -93,7 +93,8 @@ information:
 It provides a `geocode()` method that autoupdate the location values.
 To prevent autofill when modified, just set `auto_update` attribute to false.
 
-This method returns a [`ResultInterface`](https://github.com/willdurand/Geocoder/blob/master/src/Geocoder/Result/ResultInterface.php)
+This method returns a
+[`ResultInterface`](https://github.com/geocoder-php/Geocoder/blob/master/src/Geocoder/Result/ResultInterface.php)
 object, so you can override this method to fill in more fields depending on your
 model:
 
