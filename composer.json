@@ -10,10 +10,10 @@
     ],
     "require": {
         "php": ">=5.2.4",
-        "propel/propel1": ">=1.6.4,<1.7"
+        "propel/propel1": "~1.6,>=1.6.4"
     },
     "require-dev": {
-        "willdurand/geocoder": "dev-master"
+        "willdurand/geocoder": "@stable"
     },
     "autoload": {
         "classmap": ["src/"]

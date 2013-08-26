@@ -1,7 +1,7 @@
 <?php
 
 /**
- * This file is part of the Propel package.
+ * This file is part of the GeocodableBehavior package.
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  *
@@ -9,8 +9,7 @@
  */
 
 /**
- * @author     William Durand <william.durand1@gmail.com>
- * @package    propel.generator.behavior
+ * @author William Durand <william.durand1@gmail.com>
  */
 class GeocodableBehavior extends Behavior
 {
@@ -27,7 +26,7 @@ class GeocodableBehavior extends Behavior
         'geocode_address'           => 'false',
         'address_columns'           => 'street,locality,region,postal_code,country',
         // Geocoder
-        'geocoder_provider'         => '\Geocoder\Provider\YahooProvider',
+        'geocoder_provider'         => '\Geocoder\Provider\OpenStreetMapsProvider',
         'geocoder_adapter'          => '\Geocoder\HttpAdapter\CurlHttpAdapter',
         'geocoder_api_key'          => 'false',
         'geocoder_api_key_provider' => 'false',

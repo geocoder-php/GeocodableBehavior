@@ -1,7 +1,7 @@
 <?php
 
 /*
- * This file is part of the Propel package.
+ * This file is part of the GeocodableBehavior package.
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  *
@@ -276,16 +276,6 @@ EOF;
         $this->assertEquals(2, count($objects));
     }
 
-    public function testGeocodeIp()
-    {
-        $geo = new GeocodedObject();
-        $geo->setIpAddress('74.200.247.59');
-        $geo->save();
-
-        $this->assertEquals(37.7486, $geo->getLatitude(), '', 0.001);
-        $this->assertEquals(-122.4158, $geo->getLongitude(), '', 0.001);
-    }
-
     public function testGeocodeAddress()
     {
         $geo = new GeocodedObject();
@@ -309,11 +299,11 @@ EOF;
         $this->assertEquals(48.863217, $geo->getLatitude(), '', 0.001);
         $this->assertEquals(2.388821, $geo->getLongitude(), '', 0.001);
 
-        $geo->setStreet('1 avenue Léon Maniez');
+        $geo->setCity('Lyon');
         $geo->save();
 
-        $this->assertEquals(48.8526, $geo->getLatitude(), '', 0.001);
-        $this->assertEquals(2.3623, $geo->getLongitude(), '', 0.001);
+        $this->assertEquals(45.8134, $geo->getLatitude(), '', 0.001);
+        $this->assertEquals(4.8157, $geo->getLongitude(), '', 0.001);
     }
 
     public function testGeocodeAddressForceCoordinates()
@@ -413,7 +403,7 @@ EOF;
         $this->assertTrue($geo->isModified());
         $this->assertInstanceOf('Geocoder\Result\ResultInterface', $result);
         $this->assertEquals('Paris', $result->getCity());
-        $this->assertEquals('France', $result->getCountry());
+        $this->assertEquals('France Métropolitaine', $result->getCountry());
     }
 
     public function testGeocodeIsEffectLessIfGeocodingDisabled()
