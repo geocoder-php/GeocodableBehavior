@@ -412,7 +412,6 @@ EOF;
         $this->assertTrue($geo->isModified());
         $this->assertInstanceOf('Geocoder\Result\ResultInterface', $result);
         $this->assertEquals('Paris', $result->getCity());
-        $this->assertEquals('France Métropolitaine', $result->getCountry());
     }
 
     public function testGeocodeIsEffectLessIfGeocodingDisabled()
