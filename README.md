@@ -226,6 +226,10 @@ Parameters
 
     <parameter name="latitude_column" value="latitude" />
     <parameter name="longitude_column" value="longitude" />
+    <parameter name="type" value="DOUBLE" />
+    <parameter name="size" value="10" />
+    <parameter name="scale" value="8" />
+    
 
     <!-- IP-Based Geocoding -->
     <parameter name="geocode_ip" value="false" />
