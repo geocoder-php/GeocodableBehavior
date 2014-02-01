@@ -29,32 +29,38 @@ class GeocodableBehaviorQueryBuilderModifier
     public function queryMethods($builder)
     {
         $script  = '';
+        $script .= $this->addWithDistance($builder);
         $script .= $this->addFilterByDistanceFrom($builder);
         $script .= $this->addFilterNear($builder);
 
         return $script;
     }
 
-    public function addFilterByDistanceFrom($builder)
+    public function addWithDistance($builder)
     {
-        $table = $this->behavior->getTable();
-        foreach ($table->getColumns() as $col) {
-            if ($col->isPrimaryKey()) {
-                $pks[] = "\$this->getModelAliasOrName().'.".$col->getPhpName()."'";
-            }
-        }
-
         $builder->declareClass('Criteria', 'PDO');
 
         $queryClassName = $builder->getStubQueryBuilder()->getClassname();
         $peerClassName  = $builder->getStubPeerBuilder()->getClassname();
 
-        return $this->behavior->renderTemplate('queryFilterByDistanceFrom', array(
+        return $this->behavior->renderTemplate('queryWithDistance', array(
             'queryClassName'            => $queryClassName,
             'defaultUnit'               => $this->getDefaultUnit($builder),
             'peerClassName'             => $peerClassName,
             'longitudeColumnConstant'   => $this->behavior->getColumnConstant('longitude_column', $builder),
             'latitudeColumnConstant'    => $this->behavior->getColumnConstant('latitude_column', $builder),
+        ));
+    }
+
+    public function addFilterByDistanceFrom($builder)
+    {
+        $builder->declareClass('Criteria', 'PDO');
+
+        $queryClassName = $builder->getStubQueryBuilder()->getClassname();
+
+        return $this->behavior->renderTemplate('queryFilterByDistanceFrom', array(
+            'queryClassName'            => $queryClassName,
+            'defaultUnit'               => $this->getDefaultUnit($builder)
         ));
     }
 

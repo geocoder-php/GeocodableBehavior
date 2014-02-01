@@ -36,7 +36,7 @@ Basically, the behavior will add:
 * two new columns to your model (`latitude` and `longitude`);
 * four new methods to the _ActiveRecord_ API (`getDistanceTo()`, `isGeocoded()`,
 `getCoordinates()`, and `setCoordinates()`);
-* two new methods to the _ActiveQuery_ API (`filterByDistanceFrom()`,
+* three new methods to the _ActiveQuery_ API (`withDistance()`, `filterByDistanceFrom()`,
 `filterNear()`).
 
 
@@ -57,6 +57,18 @@ and longitude values.
 
 
 ### ActiveQuery API ###
+
+`withDistance()` takes three arguments:
+
+* a latitude value;
+* a longitude value;
+* a measure unit (`KILOMETERS_UNIT`, `MILES_UNIT`, or `NAUTICAL_MILES_UNIT`
+defined in the `Peer` class of the geocoded model);
+
+It will add a `Distance` column on your current query and returns itself for
+fluid interface.
+Example use: combine with `orderByDistance()` and `limit()` to return closest
+matches.
 
 `filterByDistanceFrom()` takes five arguments:
 
