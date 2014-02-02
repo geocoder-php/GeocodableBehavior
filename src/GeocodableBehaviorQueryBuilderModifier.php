@@ -57,10 +57,14 @@ class GeocodableBehaviorQueryBuilderModifier
         $builder->declareClass('Criteria', 'PDO');
 
         $queryClassName = $builder->getStubQueryBuilder()->getClassname();
+        $peerClassName  = $builder->getStubPeerBuilder()->getClassname();
 
         return $this->behavior->renderTemplate('queryFilterByDistanceFrom', array(
             'queryClassName'            => $queryClassName,
-            'defaultUnit'               => $this->getDefaultUnit($builder)
+            'defaultUnit'               => $this->getDefaultUnit($builder),
+            'peerClassName'             => $peerClassName,
+            'longitudeColumnConstant'   => $this->behavior->getColumnConstant('longitude_column', $builder),
+            'latitudeColumnConstant'    => $this->behavior->getColumnConstant('latitude_column', $builder),
         ));
     }
 
