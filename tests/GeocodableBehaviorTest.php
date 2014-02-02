@@ -145,6 +145,7 @@ EOF;
 
     public function testQueryMethods()
     {
+        $this->assertTrue(method_exists('GeocodedObjectQuery', 'withDistance'));
         $this->assertTrue(method_exists('GeocodedObjectQuery', 'filterByDistanceFrom'));
         $this->assertTrue(method_exists('GeocodedObjectQuery', 'filterNear'));
     }
@@ -222,6 +223,30 @@ EOF;
 
         $obj->setCoordinates(1, 2);
         $this->assertTrue($obj->isGeocoded());
+    }
+
+    public function testWithDistanceAddsColumn()
+    {
+        GeocodedObjectPeer::doDeleteAll();
+
+        $geo1 = new GeocodedObject();
+        $geo1->setName('Aulnat Area');
+        $geo1->setCity('Aulnat');
+        $geo1->setCountry('France');
+        $geo1->save();
+
+        $geo2 = new GeocodedObject();
+        $geo2->setName('Lyon Area');
+        $geo2->setCity('Lyon');
+        $geo2->setCountry('France');
+        $geo2->save();
+
+        $object = GeocodedObjectQuery::create()
+            ->withDistance($geo1->getLatitude(), $geo1->getLongitude())
+            ->filterByName('Lyon Area')
+            ->findOne()
+            ;
+        $this->assertTrue((float)$object->getDistance() > 0);
     }
 
     public function testFilterByDistanceFromReturnsNoObjects()
