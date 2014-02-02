@@ -246,7 +246,7 @@ EOF;
             ->filterByName('Lyon Area')
             ->findOne()
             ;
-        $this->assertTrue((float)$object->getDistance() > 0);
+        $this->assertTrue((float) $object->getDistance() > 0);
     }
 
     public function testFilterByDistanceFromReturnsNoObjects()
